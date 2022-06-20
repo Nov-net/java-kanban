@@ -1,4 +1,4 @@
-package TaskManager;
+package Tasks;
 import java.util.Objects;
 
 public class Task {
@@ -6,11 +6,13 @@ public class Task {
     private String taskName;
     private String taskDescription;
     private String taskStatus;
+    private Integer taskId;
 
-    public Task (String taskName, String taskDescription, String taskStatus) {
+    public Task (String taskName, String taskDescription, String taskStatus, Integer taskId) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.taskStatus = taskStatus;
+        this.taskId = taskId;
     }
 
     public String getTaskName() {
@@ -25,6 +27,10 @@ public class Task {
         return taskStatus;
     }
 
+    public Integer getTaskId() {
+        return taskId;
+    }
+
     public void setTaskStatus(String taskStatus) {
         this.taskStatus = taskStatus;
     }
@@ -34,18 +40,14 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(taskName, task.taskName) && Objects.equals(taskDescription, task.taskDescription) && Objects.equals(taskStatus, task.taskStatus);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(taskName, taskDescription, taskStatus);
+        return Objects.equals(taskName, task.taskName) && Objects.equals(taskDescription, task.taskDescription)
+                && Objects.equals(taskStatus, task.taskStatus) && taskId.equals(task.taskId);
     }
 
     @Override
     public String toString() {
         return  "\n" + "Task{" + "\n" +
+                "taskId='" + taskId + '\'' + "\n" +
                 "taskName='" + taskName + '\'' + "\n" +
                 "taskDescription='" + taskDescription + '\'' + "\n" +
                 "taskStatus='" + taskStatus + '\'' +

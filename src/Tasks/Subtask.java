@@ -1,12 +1,12 @@
-package TaskManager;
+package Tasks;
 import java.util.Objects;
 
 public class Subtask extends Epic {
 
     private Integer epicId;
 
-    public Subtask(String taskName, String taskDescription, String taskStatus, Integer epicId) {
-        super(taskName, taskDescription, taskStatus);
+    public Subtask(String taskName, String taskDescription, String taskStatus, Integer taskId, Integer epicId) {
+        super(taskName, taskDescription, taskStatus, taskId);
         this.epicId = epicId;
     }
 
@@ -23,14 +23,11 @@ public class Subtask extends Epic {
         return epicId.equals(subtask.epicId);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), epicId);
-    }
 
     @Override
     public String toString() {
         return "\n" + "Subtask{" + "\n" +
+                "subtaskId='" + getTaskId() + '\'' + "\n" +
                 "subtaskName='" + getTaskName() + '\'' + "\n" +
                 "subtaskDescription='" + getTaskDescription() + '\'' + "\n" +
                 "subtaskStatus='" + getTaskStatus() + '\'' +
