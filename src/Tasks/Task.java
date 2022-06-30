@@ -5,10 +5,10 @@ public class Task {
 
     private String taskName;
     private String taskDescription;
-    private String taskStatus;
+    private TasksStatus taskStatus;
     private Integer taskId;
 
-    public Task (String taskName, String taskDescription, String taskStatus, Integer taskId) {
+    public Task (String taskName, String taskDescription, TasksStatus taskStatus, Integer taskId) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.taskStatus = taskStatus;
@@ -23,7 +23,7 @@ public class Task {
         return taskDescription;
     }
 
-    public String getTaskStatus() {
+    public TasksStatus getTaskStatus() {
         return taskStatus;
     }
 
@@ -31,7 +31,7 @@ public class Task {
         return taskId;
     }
 
-    public void setTaskStatus(String taskStatus) {
+    public void setTaskStatus(TasksStatus taskStatus) {
         this.taskStatus = taskStatus;
     }
 

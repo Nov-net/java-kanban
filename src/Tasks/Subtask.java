@@ -1,11 +1,10 @@
 package Tasks;
-import java.util.Objects;
 
 public class Subtask extends Epic {
 
     private Integer epicId;
 
-    public Subtask(String taskName, String taskDescription, String taskStatus, Integer taskId, Integer epicId) {
+    public Subtask(String taskName, String taskDescription, TasksStatus taskStatus, Integer taskId, Integer epicId) {
         super(taskName, taskDescription, taskStatus, taskId);
         this.epicId = epicId;
     }
