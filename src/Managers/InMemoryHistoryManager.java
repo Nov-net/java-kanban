@@ -1,12 +1,15 @@
+package Managers;
+
 import Tasks.Task;
 import java.util.ArrayList;
+import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    ArrayList<Task> history = new ArrayList<>();
+    List<Task> history = new ArrayList<>();
 
     // Получаем историю просмотров
     @Override
-    public ArrayList<Task> getHistory(){
+    public List<Task> getHistory(){
         return history;
     }
 

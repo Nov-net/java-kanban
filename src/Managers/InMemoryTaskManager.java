@@ -1,3 +1,5 @@
+package Managers;
+
 import Tasks.Epic;
 import Tasks.Subtask;
 import Tasks.Task;
@@ -7,10 +9,11 @@ import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManager {
     Integer taskId = 1;
-    // Списки объектов
-    HashMap<Integer, Task> taskList = new HashMap<>();
-    HashMap<Integer, Epic> epicList = new HashMap<>();
-    HashMap<Integer, Subtask> subtaskList = new HashMap<>();
+
+    // Сделала hashmap'ы неизменяемыми и приватными
+    private final HashMap<Integer, Task> taskList = new HashMap<>();
+    private final HashMap<Integer, Epic> epicList = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtaskList = new HashMap<>();
 
     // Получаем объекты по id
     @Override
@@ -31,18 +34,21 @@ public class InMemoryTaskManager implements TaskManager {
         return subtaskList.get(id);
     }
 
-    // Получаем списки объектов
+    // Сделала возврат не самого списка, а его копии
     @Override
     public HashMap<Integer, Task> getTaskList() {
-        return taskList;
+        HashMap<Integer, Task> cloneTaskList = (HashMap) taskList.clone();
+        return cloneTaskList;
     }
     @Override
     public HashMap<Integer, Epic> getEpicList() {
-        return epicList;
+        HashMap<Integer, Epic> cloneEpicList = (HashMap) epicList.clone();
+        return cloneEpicList;
     }
     @Override
     public HashMap<Integer, Subtask> getSubtaskList() {
-        return subtaskList;
+        HashMap<Integer, Subtask> cloneSubtaskList = (HashMap) subtaskList.clone();
+        return cloneSubtaskList;
     }
 
     // Рассчитываем порядковый номер
