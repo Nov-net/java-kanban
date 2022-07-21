@@ -9,8 +9,6 @@ import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManager {
     Integer taskId = 1;
-
-    // Сделала hashmap'ы неизменяемыми и приватными
     private final HashMap<Integer, Task> taskList = new HashMap<>();
     private final HashMap<Integer, Epic> epicList = new HashMap<>();
     private final HashMap<Integer, Subtask> subtaskList = new HashMap<>();
@@ -18,19 +16,19 @@ public class InMemoryTaskManager implements TaskManager {
     // Получаем объекты по id
     @Override
     public Task getTask(int id) {
-        Managers.getDefaultHistory().addHistory(taskList.get(id)); // записываем историю просмотра
+        Managers.getDefaultHistory().addHistory(taskList.get(id));
         return taskList.get(id);
     }
 
     @Override
     public Epic getEpic(int id) {
-        Managers.getDefaultHistory().addHistory(epicList.get(id)); // записываем историю просмотра
+        Managers.getDefaultHistory().addHistory(epicList.get(id));
         return epicList.get(id);
     }
 
     @Override
     public Subtask getSubtask(int id) {
-        Managers.getDefaultHistory().addHistory(subtaskList.get(id)); // записываем историю просмотра
+        Managers.getDefaultHistory().addHistory(subtaskList.get(id));
         return subtaskList.get(id);
     }
 
@@ -65,13 +63,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createNewEpic(Epic epic) {
-        //taskId++;
         epicList.put(epic.getTaskId(), epic);
     }
 
     @Override
     public void createNewSubtask(Subtask subtask) {
-        //taskId++;
         subtaskList.put(subtask.getTaskId(), subtask);
     }
 
@@ -123,10 +119,12 @@ public class InMemoryTaskManager implements TaskManager {
     // Удаляем объекты по id
     @Override
     public void removeTask(int id) {
+        Managers.getDefaultHistory().removeHistory(id); //Удаляем объект из истории просмотров
         taskList.remove(id);
     }
     @Override
     public void removeEpic(int id) {
+        Managers.getDefaultHistory().removeHistory(id); //Удаляем объект из истории просмотров
         removeEpicSubtasks(id); // Сначала удаляет свои подзадачи, потом себя
         epicList.remove(id);
     }
@@ -138,6 +136,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
     @Override
     public void removeSubtask(int id) {
+        Managers.getDefaultHistory().removeHistory(id); //Удаляем объект из истории просмотров
         subtaskList.remove(id);
     }
 
