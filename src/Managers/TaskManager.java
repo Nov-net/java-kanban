@@ -14,13 +14,10 @@ public interface TaskManager {
     HashMap<Integer, Epic> getEpicList();
     HashMap<Integer, Subtask> getSubtaskList();
 
-    // Рассчитываем порядковый номер
-    Integer setTaskId();
-
     // Создаем и сохраняем новые объекты
-    void createNewTask(Task task);
-    void createNewEpic(Epic epic);
-    void createNewSubtask(Subtask subtask);
+    int createNewTask(Task task);
+    int createNewEpic(Epic epic);
+    int createNewSubtask(Subtask subtask);
 
     // Получаем имена всех объектов
     ArrayList<String> getListAllTask();

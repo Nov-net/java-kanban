@@ -1,11 +1,9 @@
 package Managers;
 
 import Tasks.Task;
-
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    List<Task> history = new ArrayList<>();
 
     public class Node {
         public Node prev;
@@ -104,22 +102,5 @@ public class InMemoryHistoryManager implements HistoryManager {
             tasksList.add(id.getValue().task);
         }
         return tasksList;
-    }
-
-    // Печатаем историю просмотров
-    public void printHistory() {
-        ArrayList<String> listAllTask = new ArrayList<>();
-        for (Task task : getHistory()) {
-            listAllTask.add(task.getTaskName());
-        }
-        System.out.println("История просмотров: " + listAllTask + "\n");
-    }
-
-    // Печатаем nodeMap
-    public void printNodeMap() {
-        System.out.println("В nodeMap ноды: ");
-        for (Map.Entry<Integer, Node> id : nodeMap.entrySet()) {
-            System.out.println(id.getValue() + "\n");
-        }
     }
 }

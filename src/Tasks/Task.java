@@ -30,6 +30,9 @@ public class Task {
     public Integer getTaskId() {
         return taskId;
     }
+    public void setTaskId(int id) {
+        this.taskId = id;
+    }
 
     public void setTaskStatus(TasksStatus taskStatus) {
         this.taskStatus = taskStatus;

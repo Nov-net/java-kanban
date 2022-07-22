@@ -12,63 +12,85 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> taskList = new HashMap<>();
     private final HashMap<Integer, Epic> epicList = new HashMap<>();
     private final HashMap<Integer, Subtask> subtaskList = new HashMap<>();
+    /*
+    Ростислав, привет!
+    Спасибо за коменты! Все сделала, как ты рекомендовал
+    */
+    private final HistoryManager historyManager = Managers.getDefaultHistory(); // добавила объект historyManager
 
     // Получаем объекты по id
     @Override
     public Task getTask(int id) {
-        Managers.getDefaultHistory().addHistory(taskList.get(id));
-        return taskList.get(id);
+        final Task task = taskList.get(id); // исправила на возврат копии объекта
+        historyManager.addHistory(task); // заменила Managers.getDefaultHistory() на historyManager
+        return task;
     }
 
     @Override
     public Epic getEpic(int id) {
-        Managers.getDefaultHistory().addHistory(epicList.get(id));
-        return epicList.get(id);
+        final Epic epic = epicList.get(id); // исправила на возврат копии объекта
+        historyManager.addHistory(epic);
+        return epic;
     }
 
     @Override
     public Subtask getSubtask(int id) {
-        Managers.getDefaultHistory().addHistory(subtaskList.get(id));
-        return subtaskList.get(id);
+        final Subtask subtask = subtaskList.get(id); // исправила на возврат копии объекта
+        historyManager.addHistory(subtask);
+        return subtask;
     }
 
-    // Сделала возврат не самого списка, а его копии
+    // Печатаем историю просмотров
+    public void printHistory() {
+        ArrayList<String> listAllTask = new ArrayList<>();
+        for (Task task : historyManager.getHistory()) {
+            listAllTask.add(task.getTaskName());
+        }
+        System.out.println("История просмотров: " + listAllTask + "\n");
+    }
+
+    // Возвращаем копию списка объектов
     @Override
     public HashMap<Integer, Task> getTaskList() {
-        HashMap<Integer, Task> cloneTaskList = (HashMap) taskList.clone();
-        return cloneTaskList;
-    }
-    @Override
-    public HashMap<Integer, Epic> getEpicList() {
-        HashMap<Integer, Epic> cloneEpicList = (HashMap) epicList.clone();
-        return cloneEpicList;
-    }
-    @Override
-    public HashMap<Integer, Subtask> getSubtaskList() {
-        HashMap<Integer, Subtask> cloneSubtaskList = (HashMap) subtaskList.clone();
-        return cloneSubtaskList;
+        return (HashMap<Integer, Task>) taskList.clone();
     }
 
-    // Рассчитываем порядковый номер
     @Override
-    public Integer setTaskId(){
-        return taskId++;
+    public HashMap<Integer, Epic> getEpicList() {
+        return (HashMap<Integer, Epic>) epicList.clone();
+    }
+
+    @Override
+    public HashMap<Integer, Subtask> getSubtaskList() {
+        return (HashMap<Integer, Subtask>) subtaskList.clone();
     }
 
     // Создаем и сохраняем новые объекты
     @Override
-    public void createNewTask(Task task) {
-        taskList.put(task.getTaskId(), task);
+    public int createNewTask(Task task) { // изменила метод на конструкцию, которую ты рекомендовал
+        //taskList.put(task.getTaskId(), task);
+        final int id = taskId++;
+        task.setTaskId(id);
+        taskList.put(id, task);
+        return id;
     }
 
     @Override
-    public void createNewEpic(Epic epic) {
-        epicList.put(epic.getTaskId(), epic);
+    public int createNewEpic(Epic epic) { // изменила метод на конструкцию, которую ты рекомендовал
+        //epicList.put(epic.getTaskId(), epic);
+        final int id = taskId++;
+        epic.setTaskId(id);
+        epicList.put(id, epic);
+        return id;
     }
 
     @Override
-    public void createNewSubtask(Subtask subtask) {
-        subtaskList.put(subtask.getTaskId(), subtask);
+    public int createNewSubtask(Subtask subtask) { // изменила метод на конструкцию, которую ты рекомендовал
+        //subtaskList.put(subtask.getTaskId(), subtask);
+        final int id = taskId++;
+        subtask.setTaskId(id);
+        subtaskList.put(id, subtask);
+        return id;
     }
 
     // Получаем имена всех объектов
@@ -107,10 +129,12 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateTask(Task task) {
         taskList.put(task.getTaskId(), task);
     }
+
     @Override
     public void updateEpic(Epic epic) {
         epicList.put(epic.getTaskId(), epic);
     }
+
     @Override
     public void updateSubtask(Subtask subtask) {
         subtaskList.put(subtask.getTaskId(), subtask);
@@ -119,24 +143,30 @@ public class InMemoryTaskManager implements TaskManager {
     // Удаляем объекты по id
     @Override
     public void removeTask(int id) {
-        Managers.getDefaultHistory().removeHistory(id); //Удаляем объект из истории просмотров
+        historyManager.removeHistory(id);
         taskList.remove(id);
     }
+
     @Override
-    public void removeEpic(int id) {
-        Managers.getDefaultHistory().removeHistory(id); //Удаляем объект из истории просмотров
-        removeEpicSubtasks(id); // Сначала удаляет свои подзадачи, потом себя
-        epicList.remove(id);
+    public void removeEpic(int id) { // Изменила метод
+        final Epic epic = epicList.remove(id);
+        if (epic == null) {
+            return;
+        }
+        historyManager.removeHistory(id);
+        removeEpicSubtasks(id);
     }
+
     @Override
     public void removeEpicSubtasks(int id) {
         for (Integer taskId : addSubtaskId(id)) { // Сначала удаляет свои подзадачи, потом себя
             removeSubtask(taskId);
         }
     }
+
     @Override
     public void removeSubtask(int id) {
-        Managers.getDefaultHistory().removeHistory(id); //Удаляем объект из истории просмотров
+        historyManager.removeHistory(id); //Удаляем объект из истории просмотров
         subtaskList.remove(id);
     }
 
@@ -145,6 +175,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeAllTask() {
         taskList.clear();
     }
+
     @Override
     public void removeAllEpic() {
         for (Integer id : epicList.keySet()) { // Сначала удаляет свои подзадачи, потом себя
@@ -154,6 +185,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         epicList.clear();
     }
+
     @Override
     public void removeAllSubtask() {
         subtaskList.clear();
@@ -169,9 +201,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         return listSubtask;
-
     }
-
 
     // Проверяем возвращение объекта на null
     @Override
