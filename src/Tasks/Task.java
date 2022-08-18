@@ -3,16 +3,21 @@ import java.util.Objects;
 
 public class Task {
 
-    private String taskName;
-    private String taskDescription;
-    private TasksStatus taskStatus;
     private Integer taskId;
+    private TasksType taskType;
+    private String taskName;
+    private TasksStatus taskStatus;
+    private String taskDescription;
+    private Integer epicId;
 
-    public Task (String taskName, String taskDescription, TasksStatus taskStatus, Integer taskId) {
-        this.taskName = taskName;
-        this.taskDescription = taskDescription;
-        this.taskStatus = taskStatus;
+    public Task (Integer taskId, TasksType taskType, String taskName, TasksStatus taskStatus,
+                 String taskDescription, Integer epicId) {
         this.taskId = taskId;
+        this.taskType = taskType;
+        this.taskName = taskName;
+        this.taskStatus = taskStatus;
+        this.taskDescription = taskDescription;
+        this.epicId = epicId;
     }
 
     public String getTaskName() {
@@ -23,10 +28,6 @@ public class Task {
         return taskDescription;
     }
 
-    public TasksStatus getTaskStatus() {
-        return taskStatus;
-    }
-
     public Integer getTaskId() {
         return taskId;
     }
@@ -34,8 +35,18 @@ public class Task {
         this.taskId = id;
     }
 
+    public TasksStatus getTaskStatus() {
+        return taskStatus;
+    }
     public void setTaskStatus(TasksStatus taskStatus) {
         this.taskStatus = taskStatus;
+    }
+
+    public TasksType getTaskType() { return taskType; }
+    public void setTaskType(TasksType taskType) { this.taskType = taskType; }
+
+    public Integer getEpicId() {
+        return epicId;
     }
 
     @Override
@@ -44,16 +55,19 @@ public class Task {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         return Objects.equals(taskName, task.taskName) && Objects.equals(taskDescription, task.taskDescription)
-                && Objects.equals(taskStatus, task.taskStatus) && taskId.equals(task.taskId);
+                && Objects.equals(taskStatus, task.taskStatus) && taskId.equals(task.taskId)
+                && Objects.equals(taskType, task.taskType) && Objects.equals(epicId, task.epicId);
     }
 
     @Override
     public String toString() {
         return  "\n" + "Task{" + "\n" +
-                "taskId='" + taskId + '\'' + "\n" +
-                "taskName='" + taskName + '\'' + "\n" +
-                "taskDescription='" + taskDescription + '\'' + "\n" +
-                "taskStatus='" + taskStatus + '\'' +
+                "id='" + taskId + '\'' + "\n" +
+                "type='" + taskType + '\'' + "\n" +
+                "name='" + taskName + '\'' + "\n" +
+                "status='" + taskStatus + '\'' + "\n" +
+                "description='" + taskDescription + '\'' + "\n" +
+                "epicId='" + epicId + '\'' +
                 '}';
     }
 

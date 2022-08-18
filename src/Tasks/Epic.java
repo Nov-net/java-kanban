@@ -6,8 +6,9 @@ public class Epic extends Task {
 
     private ArrayList<Integer> listEpicSubtasks;
 
-    public Epic(String taskName, String taskDescription, TasksStatus taskStatus, Integer taskId) {
-        super(taskName, taskDescription, taskStatus, taskId);
+    public Epic(Integer taskId, TasksType taskType, String taskName, TasksStatus taskStatus,
+                String taskDescription, Integer epicId) {
+        super(taskId, taskType, taskName, taskStatus, taskDescription, epicId);
     }
 
     public Boolean isEpic(Epic epic) {
@@ -33,13 +34,4 @@ public class Epic extends Task {
         return Objects.equals(listEpicSubtasks, epic.listEpicSubtasks);
     }
 
-    @Override
-    public String toString() {
-        return "\n" + "Epic{" + "\n" +
-                "epicId='" + getTaskId() + '\'' + "\n" +
-                "epicName='" + getTaskName() + '\'' + "\n" +
-                "epicDescription='" + getTaskDescription() + '\'' + "\n" +
-                "epicStatus='" + getTaskStatus() + '\'' +
-                '}';
-    }
 }

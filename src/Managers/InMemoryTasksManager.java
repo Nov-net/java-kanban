@@ -7,35 +7,31 @@ import Tasks.TasksStatus;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class InMemoryTaskManager implements TaskManager {
+public class InMemoryTasksManager implements TaskManager {
     Integer taskId = 1;
     private final HashMap<Integer, Task> taskList = new HashMap<>();
     private final HashMap<Integer, Epic> epicList = new HashMap<>();
     private final HashMap<Integer, Subtask> subtaskList = new HashMap<>();
-    /*
-    Ростислав, привет!
-    Спасибо за коменты! Все сделала, как ты рекомендовал
-    */
-    private final HistoryManager historyManager = Managers.getDefaultHistory(); // добавила объект historyManager
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     // Получаем объекты по id
     @Override
     public Task getTask(int id) {
-        final Task task = taskList.get(id); // исправила на возврат копии объекта
-        historyManager.addHistory(task); // заменила Managers.getDefaultHistory() на historyManager
+        final Task task = taskList.get(id);
+        historyManager.addHistory(task);
         return task;
     }
 
     @Override
     public Epic getEpic(int id) {
-        final Epic epic = epicList.get(id); // исправила на возврат копии объекта
+        final Epic epic = epicList.get(id);
         historyManager.addHistory(epic);
         return epic;
     }
 
     @Override
     public Subtask getSubtask(int id) {
-        final Subtask subtask = subtaskList.get(id); // исправила на возврат копии объекта
+        final Subtask subtask = subtaskList.get(id);
         historyManager.addHistory(subtask);
         return subtask;
     }
@@ -67,8 +63,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Создаем и сохраняем новые объекты
     @Override
-    public int createNewTask(Task task) { // изменила метод на конструкцию, которую ты рекомендовал
-        //taskList.put(task.getTaskId(), task);
+    public int addTask(Task task) {
         final int id = taskId++;
         task.setTaskId(id);
         taskList.put(id, task);
@@ -76,8 +71,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public int createNewEpic(Epic epic) { // изменила метод на конструкцию, которую ты рекомендовал
-        //epicList.put(epic.getTaskId(), epic);
+    public int addEpic(Epic epic) {
         final int id = taskId++;
         epic.setTaskId(id);
         epicList.put(id, epic);
@@ -85,8 +79,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public int createNewSubtask(Subtask subtask) { // изменила метод на конструкцию, которую ты рекомендовал
-        //subtaskList.put(subtask.getTaskId(), subtask);
+    public int addSubtask(Subtask subtask) {
         final int id = taskId++;
         subtask.setTaskId(id);
         subtaskList.put(id, subtask);
@@ -148,7 +141,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeEpic(int id) { // Изменила метод
+    public void removeEpic(int id) {
         final Epic epic = epicList.remove(id);
         if (epic == null) {
             return;
@@ -159,7 +152,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeEpicSubtasks(int id) {
-        for (Integer taskId : addSubtaskId(id)) { // Сначала удаляет свои подзадачи, потом себя
+        for (Integer taskId : getSubtaskId(id)) { // Сначала удаляет свои подзадачи, потом себя
             removeSubtask(taskId);
         }
     }
@@ -179,7 +172,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeAllEpic() {
         for (Integer id : epicList.keySet()) { // Сначала удаляет свои подзадачи, потом себя
-            for (Integer taskId : addSubtaskId(id)) {
+            for (Integer taskId : getSubtaskId(id)) {
                 removeEpicSubtasks(taskId);
             }
         }
@@ -193,7 +186,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Получаем список подзадач эпика
     @Override
-    public ArrayList<Integer> addSubtaskId(int id) {
+    public ArrayList<Integer> getSubtaskId(int id) {
         ArrayList<Integer> listSubtask = new ArrayList<>();
         for (Integer taskId : subtaskList.keySet()) {
             if (subtaskList.get(taskId).getEpicId() == id) {
@@ -221,18 +214,18 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Рассчитываем статус эпика по статусам сабтасков
     @Override
-    public void setEpicStatus(int id) {
+    public void updateEpicStatus(int id) {
         int checkStatus = 0;
-        for (Integer taskId : addSubtaskId(id)) {
+        for (Integer taskId : getSubtaskId(id)) {
             if (subtaskList.get(taskId).getTaskStatus().equals(TasksStatus.DONE)) {
                 checkStatus = checkStatus + 2;
             } else if (subtaskList.get(taskId).getTaskStatus().equals(TasksStatus.IN_PROGRESS)) {
                 checkStatus = checkStatus + 1;
             }
         }
-        if (checkStatus != 0 && checkStatus == addSubtaskId(id).size() * 2) {
+        if (checkStatus != 0 && checkStatus == getSubtaskId(id).size() * 2) {
             epicList.get(id).setTaskStatus(TasksStatus.DONE);
-        } else if (checkStatus > 0 && checkStatus < addSubtaskId(id).size() * 2) {
+        } else if (checkStatus > 0 && checkStatus < getSubtaskId(id).size() * 2) {
             epicList.get(id).setTaskStatus(TasksStatus.IN_PROGRESS);
         } else if (checkStatus == 0){
             epicList.get(id).setTaskStatus(TasksStatus.NEW);

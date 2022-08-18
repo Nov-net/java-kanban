@@ -5,7 +5,6 @@ import Tasks.Subtask;
 import Tasks.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public interface TaskManager {
 
@@ -15,9 +14,9 @@ public interface TaskManager {
     HashMap<Integer, Subtask> getSubtaskList();
 
     // Создаем и сохраняем новые объекты
-    int createNewTask(Task task);
-    int createNewEpic(Epic epic);
-    int createNewSubtask(Subtask subtask);
+    int addTask(Task task);
+    int addEpic(Epic epic);
+    int addSubtask(Subtask subtask);
 
     // Получаем имена всех объектов
     ArrayList<String> getListAllTask();
@@ -48,7 +47,7 @@ public interface TaskManager {
     void removeAllSubtask();
 
     // Получаем список подзадач эпика
-    ArrayList<Integer> addSubtaskId(int id);
+    ArrayList<Integer> getSubtaskId(int id);
 
     // Проверяем возвращение объекта на null
     boolean checkEpic(int id);
@@ -57,5 +56,5 @@ public interface TaskManager {
     ArrayList<Integer> getListEpicSubtasks(int id);
 
     // Рассчитываем статус эпика по статусам сабтасков
-    void setEpicStatus(int id);
+    void updateEpicStatus(int id);
 }

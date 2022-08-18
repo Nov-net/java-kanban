@@ -1,39 +1,36 @@
-import Managers.InMemoryTaskManager;
-import Tasks.Task;
-import Tasks.Epic;
-import Tasks.Subtask;
-import Tasks.TasksStatus;
+import Managers.InMemoryTasksManager;
+import Tasks.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+        InMemoryTasksManager taskManager = new InMemoryTasksManager();
 
         // Создаем новые объекты
-        taskManager.createNewTask(new Task("Задача 1", "Текст задачи 1", TasksStatus.NEW,
-                null));
-        taskManager.createNewEpic(new Epic("Эпик 2", "Текст эпика 2",
-                TasksStatus.NEW, null));
-        taskManager.createNewSubtask(new Subtask("Сабтаск 3 к эпику 2", "Текст сабтаска 3",
-                TasksStatus.NEW, null, 2));
-        taskManager.createNewTask(new Task("Задача 4", "Текст задачи 4", TasksStatus.NEW,
-                null));
-        taskManager.createNewEpic(new Epic("Эпик 5", "Текст эпика 5",
-                TasksStatus.NEW, null));
-        taskManager.createNewSubtask(new Subtask("Сабтаск 6 к эпику 2", "Текст сабтаска 6",
-                TasksStatus.NEW, null, 2));
-        taskManager.createNewSubtask(new Subtask("Сабтаск 7 к эпику 2", "Текст сабтаска 7",
-                TasksStatus.NEW, null, 2));
-        taskManager.createNewSubtask(new Subtask("Сабтаск 8 к эпику 5", "Текст сабтаска 8",
-                TasksStatus.NEW, null, 5));
-        taskManager.createNewSubtask(new Subtask("Сабтаск 9 к эпику 5", "Текст сабтаска 9",
-                TasksStatus.NEW, null, 5));
-        taskManager.createNewTask(new Task("Задача 10", "Текст задачи", TasksStatus.NEW,
-                null));
-        taskManager.createNewEpic(new Epic("Эпик 11", "Текст эпика",
-                TasksStatus.NEW, null));
-        taskManager.createNewSubtask(new Subtask("Сабтаск 12 к эпику 5", "Текст сабтаска",
-                TasksStatus.NEW, null, 5));
+        taskManager.addTask(new Task(null, TasksType.TASK, "Задача 1", TasksStatus.NEW,
+                "Текст задачи 1", null));
+        taskManager.addEpic(new Epic(null, TasksType.EPIC,"Эпик 2", TasksStatus.NEW,
+                "Текст эпика 2", null));
+        taskManager.addSubtask(new Subtask(null, TasksType.SUBTASK,"Сабтаск 3 к эпику 2",
+                TasksStatus.NEW,"Текст сабтаска 3", 2));
+        taskManager.addTask(new Task(null, TasksType.TASK, "Задача 4", TasksStatus.NEW,
+                "Текст задачи 4", null));
+        taskManager.addEpic(new Epic(null, TasksType.EPIC,"Эпик 5", TasksStatus.NEW,
+                "Текст эпика 5", null));
+        taskManager.addSubtask(new Subtask(null, TasksType.SUBTASK,"Сабтаск 6 к эпику 2",
+                 TasksStatus.NEW, "Текст сабтаска 6", 2));
+        taskManager.addSubtask(new Subtask(null, TasksType.SUBTASK,"Сабтаск 7 к эпику 2",
+                TasksStatus.NEW, "Текст сабтаска 7", 2));
+        taskManager.addSubtask(new Subtask(null, TasksType.SUBTASK,"Сабтаск 8 к эпику 5",
+                TasksStatus.NEW, "Текст сабтаска 8", 5));
+        taskManager.addSubtask(new Subtask(null, TasksType.SUBTASK,"Сабтаск 9 к эпику 5",
+                TasksStatus.NEW, "Текст сабтаска 9", 5));
+        taskManager.addTask(new Task(null, TasksType.TASK, "Задача 10", TasksStatus.NEW,
+                "Текст задачи 10", null));
+        taskManager.addEpic(new Epic(null, TasksType.EPIC,"Эпик 11", TasksStatus.NEW,
+                "Текст эпика 11", null));
+        taskManager.addSubtask(new Subtask(null, TasksType.SUBTASK,"Сабтаск 12 к эпику 5",
+                TasksStatus.NEW, "Текст сабтаска 12", 5));
 
         // Получаем объект по id и проверяем список просмотров
         System.out.println("Вызываем задачи");
@@ -56,12 +53,6 @@ public class Main {
         taskManager.printHistory();
 
         /*
-
-        // Проверяем, что создали, печатаем содержание всех задач
-        System.out.println( "\n" + "Проверяем содержание сохраненных объектов" + "\n");
-        System.out.println(taskManager.getTaskList() + "\n");
-        System.out.println(taskManager.getEpicList() + "\n");
-        System.out.println(taskManager.getSubtaskList() + "\n");
 
         // Проверяем, что создали, печатаем содержание всех задач
         System.out.println( "\n" + "Проверяем содержание сохраненных объектов" + "\n");
