@@ -83,6 +83,8 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
             case "DONE":
                 status = TasksStatus.DONE;
                 break;
+            default:
+                System.out.println("Задача не найдена");
         }
 
         Task task = null;
@@ -107,6 +109,8 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
                     taskId = Integer.parseInt(splitTask[0]);
                 }
                 break;
+            default:
+                System.out.println("Тип задачи не задан");
         }
         return task;
     }
