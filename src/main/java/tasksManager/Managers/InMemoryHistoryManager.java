@@ -1,11 +1,11 @@
-package Managers;
+package tasksManager.Managers;
 
-import Tasks.Task;
+import tasksManager.Tasks.*;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    public class Node {
+    private class Node {
         public Node prev;
         public Task task;
         public Node next;
@@ -41,7 +41,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     // Формируем ноду и добавляем в nodeMap
-    public void linkLast(Task task) {
+    private void linkLast(Task task) {
         final Node newNode = new Node(last, task, null);
         last = newNode;
         if (first == null) {
@@ -62,7 +62,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     // Удаляем объект и меняем привязки в нодах
-    public void removeNode(Node node) {
+    private void removeNode(Node node) {
         if (node == null) {
             return;
         }
@@ -96,7 +96,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         return getTask();
     }
 
-    public List<Task> getTask(){
+    private List<Task> getTask(){
         List<Task> tasksList = new ArrayList<>();
         for (Map.Entry<Integer, Node> id : nodeMap.entrySet()) {
             tasksList.add(id.getValue().task);

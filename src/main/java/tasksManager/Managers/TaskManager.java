@@ -1,8 +1,6 @@
-package Managers;
+package tasksManager.Managers;
 
-import Tasks.Epic;
-import Tasks.Subtask;
-import Tasks.Task;
+import tasksManager.Tasks.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -49,12 +47,18 @@ public interface TaskManager {
     // Получаем список подзадач эпика
     ArrayList<Integer> getSubtaskId(int id);
 
-    // Проверяем возвращение объекта на null
-    boolean checkEpic(int id);
-
-    // Возвращаем список подзадач эпика, если объект не null
-    ArrayList<Integer> getListEpicSubtasks(int id);
-
     // Рассчитываем статус эпика по статусам сабтасков
     void updateEpicStatus(int id);
+
+    // Расчет startTime эпика по startTime сабтасков
+    void updateEpicStartTime(int id);
+
+    // Апдейт endTime эпика по endTime сабтасков
+    void updateEpicEndTime(int id);
+
+    // Апдейт duration эпика по сумме duration сабтасков
+    void updateEpicDuration(int id);
+
+    // Апдейт всех элементов эпика зависящих от сабтасков
+    void updateEpicElements(int id);
 }

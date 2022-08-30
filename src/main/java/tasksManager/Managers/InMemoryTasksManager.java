@@ -1,9 +1,8 @@
-package Managers;
+package tasksManager.Managers;
 
-import Tasks.Epic;
-import Tasks.Subtask;
-import Tasks.Task;
-import Tasks.TasksStatus;
+import tasksManager.Tasks.*;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -36,15 +35,6 @@ public class InMemoryTasksManager implements TaskManager {
         return subtask;
     }
 
-    // Печатаем историю просмотров
-    public void printHistory() {
-        ArrayList<String> listAllTask = new ArrayList<>();
-        for (Task task : historyManager.getHistory()) {
-            listAllTask.add(task.getTaskName());
-        }
-        System.out.println("История просмотров: " + listAllTask + "\n");
-    }
-
     // Возвращаем копию списка объектов
     @Override
     public HashMap<Integer, Task> getTaskList() {
@@ -75,6 +65,7 @@ public class InMemoryTasksManager implements TaskManager {
         final int id = taskId++;
         epic.setTaskId(id);
         epicList.put(id, epic);
+        updateEpicElements(epic.getTaskId());
         return id;
     }
 
@@ -83,6 +74,9 @@ public class InMemoryTasksManager implements TaskManager {
         final int id = taskId++;
         subtask.setTaskId(id);
         subtaskList.put(id, subtask);
+        if(subtask.getEpicId() != null && epicList.get(subtask.getEpicId()) != null) {
+            updateEpicElements(subtask.getEpicId());
+        }
         return id;
     }
 
@@ -126,11 +120,15 @@ public class InMemoryTasksManager implements TaskManager {
     @Override
     public void updateEpic(Epic epic) {
         epicList.put(epic.getTaskId(), epic);
+        updateEpicElements(epic.getTaskId());
     }
 
     @Override
     public void updateSubtask(Subtask subtask) {
         subtaskList.put(subtask.getTaskId(), subtask);
+        if(subtask.getEpicId() != null && epicList.get(subtask.getEpicId()) != null) {
+            updateEpicElements(subtask.getEpicId());
+        }
     }
 
     // Удаляем объекты по id
@@ -172,9 +170,7 @@ public class InMemoryTasksManager implements TaskManager {
     @Override
     public void removeAllEpic() {
         for (Integer id : epicList.keySet()) { // Сначала удаляет свои подзадачи, потом себя
-            for (Integer taskId : getSubtaskId(id)) {
-                removeEpicSubtasks(taskId);
-            }
+            removeEpicSubtasks(id);
         }
         epicList.clear();
     }
@@ -196,22 +192,6 @@ public class InMemoryTasksManager implements TaskManager {
         return listSubtask;
     }
 
-    // Проверяем возвращение объекта на null
-    @Override
-    public boolean checkEpic(int id) {
-        return epicList.get(id) != null;
-    }
-
-    // Возвращаем список подзадач эпика, если объект не null
-    @Override
-    public ArrayList<Integer> getListEpicSubtasks(int id) {
-        if (checkEpic(id)) {
-            return epicList.get(id).getListEpicSubtasks();
-        } else {
-            return null;
-        }
-    }
-
     // Рассчитываем статус эпика по статусам сабтасков
     @Override
     public void updateEpicStatus(int id) {
@@ -230,6 +210,65 @@ public class InMemoryTasksManager implements TaskManager {
         } else if (checkStatus == 0){
             epicList.get(id).setTaskStatus(TasksStatus.NEW);
         }
+    }
+
+    // Апдейт startTime эпика по startTime сабтасков
+    @Override
+    public void updateEpicStartTime(int id) {
+        LocalDateTime checkStartTime = null;
+        for (Integer taskId : getSubtaskId(id)) {
+            if (subtaskList.get(taskId).getStartTime() == null && checkStartTime == null) {
+                checkStartTime = null;
+            } else if (subtaskList.get(taskId).getStartTime() != null && checkStartTime == null) {
+                checkStartTime = subtaskList.get(taskId).getStartTime();
+            } else if (subtaskList.get(taskId).getStartTime().isBefore(checkStartTime)) {
+                checkStartTime = subtaskList.get(taskId).getStartTime();
+            }
+        }
+        if (checkStartTime != null) {
+            epicList.get(id).setStartTime(checkStartTime);
+        }
+    }
+
+    // Апдейт endTime эпика по endTime сабтасков
+    @Override
+    public void updateEpicEndTime(int id) {
+        LocalDateTime checkEndTime = null;
+        for (Integer taskId : getSubtaskId(id)) {
+            if (subtaskList.get(taskId).getEndTime() == null && checkEndTime == null) {
+                checkEndTime = null;
+            } else if (subtaskList.get(taskId).getEndTime() != null && checkEndTime == null) {
+                checkEndTime = subtaskList.get(taskId).getEndTime();
+            } else if (subtaskList.get(taskId).getEndTime().isAfter(checkEndTime)) {
+                checkEndTime = subtaskList.get(taskId).getEndTime();
+            }
+        }
+        if (checkEndTime != null) {
+            epicList.get(id).setEndTime(checkEndTime);
+        }
+    }
+
+    // Апдейт duration эпика по сумме duration сабтасков
+    @Override
+    public void updateEpicDuration(int id) {
+        Integer duration = 0;
+        for (Integer taskId : getSubtaskId(id)) {
+            if (subtaskList.get(taskId).getDuration() != null) {
+                duration += subtaskList.get(taskId).getDuration();
+            }
+        }
+        if (duration != null) {
+            epicList.get(id).setDuration(duration);
+        }
+    }
+
+    // Апдейт всех элементов эпика зависящих от сабтасков
+    @Override
+    public void updateEpicElements(int id) {
+        updateEpicStatus(id);
+        updateEpicStartTime(id);
+        updateEpicEndTime(id);
+        updateEpicDuration(id);
     }
 
 }

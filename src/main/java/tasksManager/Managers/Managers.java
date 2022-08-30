@@ -1,4 +1,4 @@
-package Managers;
+package tasksManager.Managers;
 
 public abstract class Managers {
 
@@ -10,7 +10,6 @@ public abstract class Managers {
         return new InMemoryHistoryManager();
     }
 
-    // Ростислав, привет! По твоей рекомендации добавила стандартную реализацию для нового класса
     public TaskManager getDefaultFileBackedTasksManager() {
         return new FileBackedTasksManager();
     }

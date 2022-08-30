@@ -1,7 +1,4 @@
-﻿id,type,name,status,description,epic
-1,TASK,Task1,NEW,Description task1
-2,EPIC,Epic2,IN_PROGRESS,Description epic2
-3,SUBTASK,Sub Task3,NEW,Description sub task3,2
-4,SUBTASK,Sub Task4,NEW,Description sub task4,2
+id,type,name,status,description,startTime,duration,epic
+1,TASK,Задача 1,NEW,Текст задачи 1,01.09.2022 10:00,15
 
-1,2
+1
