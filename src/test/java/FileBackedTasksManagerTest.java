@@ -1,10 +1,11 @@
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasksManager.Managers.FileBackedTasksManager;
 import tasksManager.Tasks.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,10 +17,24 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FileBackedTasksManagerTest extends TaskManagerTest {
 
     private static FileBackedTasksManager backedTasksManager;
+    private File file = new File("task_storage.csv");;
 
     @BeforeEach
     public void beforeEach() {
-        backedTasksManager = new FileBackedTasksManager();
+        try (Writer fileWriter = new FileWriter(file, StandardCharsets.UTF_8)) {
+            fileWriter.write("id,type,name,status,description,startTime,duration,epic\n");
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Файл не найден");
+        } catch (IOException e) {
+            System.out.println("IOException");
+        }
+        backedTasksManager = new FileBackedTasksManager(file);
+    }
+
+    @AfterEach
+    public void remove() {
+        backedTasksManager.removeAllTask();
     }
 
     @Test
@@ -27,9 +42,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest {
         Task task1 = new Task(1, TasksType.TASK, "Task1", TasksStatus.NEW,
                 "Description task1", "01.08.2022 10:00", 15, null);
         Epic task2 = new Epic(2, TasksType.EPIC, "Epic2", TasksStatus.NEW,
-                "Description epic2", "01.08.2022 11:00", 60, null);
+                "Description epic2", "02.08.2022 11:00", 60, null);
         Subtask task3 = new Subtask(3, TasksType.SUBTASK, "Sub Task3", TasksStatus.NEW,
-                "Description sub task3", "01.08.2022 11:00", 60, 2);
+                "Description sub task3", "03.08.2022 11:00", 60, 2);
         backedTasksManager.addTask(task1);
         backedTasksManager.addTask(task2);
         backedTasksManager.addTask(task3);
@@ -68,13 +83,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest {
         assertNotNull(list, "Список не возвращается.");
         assertEquals(3, list.size(), "Неверное количество задач.");
 
-        List<Task> list3 = fileBackedTasksManager.getHistory();
-        assertNotNull(list3, "Список не возвращается.");
-        assertEquals(3, list3.size(), "Неверное количество задач.");
-        assertEquals(task1, list3.get(0), "Задачи не совпадают.");
-        assertEquals(task2, list3.get(1), "Задачи не совпадают.");
-        assertEquals(task3, list3.get(2), "Задачи не совпадают.");
-        backedTasksManager.removeAllTask();
     }
 
     @Test
@@ -207,9 +215,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest {
             throw new RuntimeException(e);
         }
 
-        final Task savedTask8 = fileBackedTasksManager.getTask(1);
-        final Task savedTask9 = fileBackedTasksManager.getTask(2);
-        final Task savedTask10 = fileBackedTasksManager.getTask(3);
+        final Task savedTask8 = fileBackedTasksManager.getTask(taskId );
+        final Task savedTask9 = fileBackedTasksManager.getTask(taskId4);
+        final Task savedTask10 = fileBackedTasksManager.getTask(taskId7);
 
         assertNotNull(savedTask8, "Задача не найдена.");
         assertNotNull(savedTask9, "Задача не найдена.");
@@ -222,9 +230,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest {
 
         assertNotNull(tasks8, "Задачи на возвращаются.");
         assertEquals(3, tasks8.size(), "Неверное количество задач.");
-        assertEquals(savedTask3, tasks8.get(1), "Задачи не совпадают.");
-        assertEquals(savedTask4, tasks8.get(2), "Задачи не совпадают.");
-        assertEquals(savedTask7, tasks8.get(3), "Задачи не совпадают.");
+        assertEquals(savedTask3, tasks8.get(taskId3), "Задачи не совпадают.");
+        assertEquals(savedTask4, tasks8.get(taskId4), "Задачи не совпадают.");
+        assertEquals(savedTask7, tasks8.get(taskId7), "Задачи не совпадают.");
 
         final TreeSet<Task> list8 = fileBackedTasksManager.getPrioritizedTasks();
         assertEquals(3, list8.size(), "Неверное количество задач.");
@@ -529,7 +537,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest {
                 "Текст эпика 1",null, null, null);
         final int taskId = backedTasksManager.addTask(epic);
 
-        assertNull(epic.getStartTime(), "StartTime эпика не null.");
+        assertNull(epic.getStartTimeInLocalDate(), "StartTime эпика не null.");
 
         // StartTime сабтаска null
         Subtask task0 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
@@ -537,7 +545,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest {
         final int i = backedTasksManager.addTask(task0);
         backedTasksManager.updateEpicStartTime(taskId);
 
-        assertNull(epic.getStartTime(), "StartTime эпика не null.");
+        assertNull(epic.getStartTimeInLocalDate(), "StartTime эпика не null.");
 
         // StartTime сабтаска не null
         Subtask task1 = new Subtask(i, TasksType.SUBTASK,"Сабтаск к эпику 1",
@@ -549,10 +557,10 @@ public class FileBackedTasksManagerTest extends TaskManagerTest {
         backedTasksManager.addTask(task2);
         backedTasksManager.updateEpicStartTime(taskId);
 
-        final LocalDateTime epicStartTime = backedTasksManager.getTask(taskId).getStartTime();
+        final LocalDateTime epicStartTime = backedTasksManager.getTask(taskId).getStartTimeInLocalDate();
 
-        assertNotNull(epic.getStartTime(), "StartTime эпика null.");
-        assertEquals(backedTasksManager.getTask(i).getStartTime(), epicStartTime,
+        assertNotNull(epic.getStartTimeInLocalDate(), "StartTime эпика null.");
+        assertEquals(backedTasksManager.getTask(i).getStartTimeInLocalDate(), epicStartTime,
                 "StartTime эпика и сабтаска не совпадает.");
     }
 
@@ -602,6 +610,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest {
 
         assertNotNull(epic.getDuration(), "Duration эпика null.");
         assertEquals(90, backedTasksManager.getTask(taskId).getDuration(), "Duration не совпадает.");
+
     }
 
     // Апдейт всех элементов эпика зависящих от сабтасков
@@ -623,8 +632,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest {
         assertNotNull(epic.getTaskStatus(), "Статус эпика null.");
         assertEquals(TasksStatus.DONE, backedTasksManager.getTask(taskId).getTaskStatus(), "Статус не совпадает.");
 
-        assertNotNull(epic.getStartTime(), "StartTime эпика null.");
-        assertEquals(backedTasksManager.getTask(i1).getStartTime(), backedTasksManager.getTask(taskId).getStartTime(),
+        assertNotNull(epic.getStartTimeInLocalDate(), "StartTime эпика null.");
+        assertEquals(backedTasksManager.getTask(i1).getStartTimeInLocalDate(), backedTasksManager.getTask(taskId).getStartTimeInLocalDate(),
                 "StartTime эпика и сабтаска не совпадает.");
 
         assertNotNull(epic.getEpicEndTime(), "EndTime эпика null.");
@@ -633,6 +642,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest {
 
         assertNotNull(epic.getDuration(), "Duration эпика null.");
         assertEquals(90, backedTasksManager.getTask(taskId).getDuration(), "Duration не совпадает.");
+
     }
 
     @Test
@@ -645,11 +655,13 @@ public class FileBackedTasksManagerTest extends TaskManagerTest {
 
         final TreeSet<Task> list1 = backedTasksManager.getPrioritizedTasks();
         assertEquals(1, list1.size(), "Неверное количество задач.");
+
     }
 
     @Test
     void getHistory() {
         // проверка существующего id
+        backedTasksManager.removeAllTask();
         Task task = new Task(null, TasksType.TASK, "Задача 1", TasksStatus.NEW,
                 "Текст задачи 1", "01.09.2022 10:00", 15, null);
         final int taskId = backedTasksManager.addTask(task);
@@ -667,5 +679,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest {
 
         List<Task> list3 = backedTasksManager.getHistory();
         assertEquals(1, list3.size(), "Неверное количество задач.");
+
     }
 }

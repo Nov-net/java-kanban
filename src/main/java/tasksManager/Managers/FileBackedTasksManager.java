@@ -19,14 +19,12 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     }
 
     public static Integer taskId = 0;
-    private final static HashMap<Integer, Task> taskList = new HashMap<>();
-    private final static HistoryManager historyManager = Managers.getDefaultHistory();
-    Comparator<Task> taskComparator = Comparator.comparing(Task::getStartTime,
+    protected final static HashMap<Integer, Task> taskList = new HashMap<>();
+    protected final static HistoryManager historyManager = Managers.getDefaultHistory();
+    Comparator<Task> taskComparator = Comparator.comparing(Task::getStartTimeInLocalDate,
                                                         Comparator.nullsLast(Comparator.naturalOrder()))
                                                 .thenComparing(Task::getTaskName);
     TreeSet<Task> prioritizedTasks = new TreeSet<>(taskComparator);
-
-    // Ростислав, привет! Инвертировала условие в loadFromFile() и удалила второй main, как ты рекомендовал
 
     // Метод создания экземпляра класса с восстановленным списком задач и историей просмотров
     public FileBackedTasksManager loadFromFile(File file) throws IOException, NullPointerException, NumberFormatException {
@@ -53,7 +51,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     }
 
     // Чтение файла по строкам, возвращает список строк
-    private ArrayList<String> fileReader(File file) {
+    protected ArrayList<String> fileReader(File file) {
         ArrayList<String> lines = new ArrayList<>();
 
         try (FileReader reader = new FileReader(file.getName());
@@ -73,7 +71,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     }
 
     // Создание задачи из строки
-    private static Task fromSring(String value) {
+    public Task fromSring(String value) {
         String[] splitTask = value.split(",");
         TasksStatus status = null;
         switch (splitTask[3]) {
@@ -121,7 +119,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     }
 
     // Запись задачи в строку
-    private String toString(Task task) {
+    protected String toString(Task task) {
         String line;
         if (task.getEpicId() != null) {
             line = String.format("%s,%s,%s,%s,%s,%s,%s,%s\n", task.getTaskId(), task.getTaskType(), task.getTaskName(),
@@ -135,7 +133,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     }
 
     // Создание списка просмотров из строки
-    private static List<Integer> historyFromString(String value) {
+    protected static List<Integer> historyFromString(String value) {
         ArrayList<Integer> list = new ArrayList<>();
         String[] number = value.split(",");
         for (String i : number) {
@@ -145,14 +143,14 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     }
 
     // Запись списка просмотров в historyManager
-    private static void recoveryHistory(List<Integer> list) {
+    protected static void recoveryHistory(List<Integer> list) {
         for (Integer i : list) {
             historyManager.addHistory(taskList.get(i));
         }
     }
 
     // Запись в строку истории просмотров
-    private static String historyToString(HistoryManager manager) {
+    protected static String historyToString(HistoryManager manager) {
         ArrayList<Integer> list = new ArrayList<>();
         for (Task task : manager.getHistory()) {
             list.add(task.getTaskId());
@@ -164,7 +162,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     }
 
     // Сохранение в файл задач и истории просмотров
-    private void save() {
+    protected void save() {
         try (Writer fileWriter = new FileWriter("task_storage.csv", StandardCharsets.UTF_8)) {
             fileWriter.write("id,type,name,status,description,startTime,duration,epic\n");
             for (Task task : taskList.values()) {
@@ -309,23 +307,24 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
         LocalDateTime checkStartTime = null;
         for (Integer taskId : getSubtaskId(id)) {
             if (taskList.get(taskId)
-                        .getStartTime() == null && checkStartTime == null) {
+                        .getStartTimeInLocalDate() == null && checkStartTime == null) {
                 checkStartTime = null;
             } else if (taskList.get(taskId)
-                               .getStartTime() != null && checkStartTime == null) {
+                               .getStartTimeInLocalDate() != null && checkStartTime == null) {
                 checkStartTime = taskList.get(taskId)
-                                         .getStartTime();
+                                         .getStartTimeInLocalDate();
             } else if (taskList.get(taskId)
-                               .getStartTime()
+                               .getStartTimeInLocalDate()
                                .isBefore(checkStartTime)) {
                 checkStartTime = taskList.get(taskId)
-                                         .getStartTime();
+                                         .getStartTimeInLocalDate();
             }
         }
         if (checkStartTime != null) {
             taskList.get(id)
                     .setStartTime(checkStartTime);
         }
+        save();
     }
 
     // Апдейт endTime эпика по endTime сабтасков
@@ -351,6 +350,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
             taskList.get(id)
                     .setEndTime(checkEndTime);
         }
+        save();
     }
 
     // Апдейт duration эпика по сумме duration сабтасков
@@ -370,6 +370,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
             taskList.get(id)
                     .setDuration(duration);
         }
+        save();
     }
 
     // Апдейт всех элементов эпика зависящих от сабтасков
@@ -383,6 +384,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
         updateEpicEndTime(id);
         updateEpicDuration(id);
         addTaskInPrioritizedList(taskList.get(id));
+        save();
     }
 
     // Удаление объектов по id
@@ -400,6 +402,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
             historyManager.removeHistory(id);
             prioritizedTasks.remove(taskList.get(id));
             taskList.remove(id);
+            save();
         }
     }
 
@@ -408,6 +411,8 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     public void removeAllTask() {
         prioritizedTasks.clear();
         taskList.clear();
+        historyManager.removeALLHistory();
+        save();
     }
 
     // Печать истории просмотров
@@ -416,7 +421,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     }
 
     // Приоретизация списка задач
-    private void addTaskInPrioritizedList(Task task) {
+    protected void addTaskInPrioritizedList(Task task) {
         if (task.getTaskId() != null) {
             for (Task t : prioritizedTasks) {
                 if (t.getTaskId() == task.getTaskId()) {
@@ -431,25 +436,25 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
         return (TreeSet<Task>) prioritizedTasks.clone();
     }
 
-    private boolean checkFreeTime(Task task) {
+    protected boolean checkFreeTime(Task task) {
         boolean freeTime = true;
         for (Task t : getPrioritizedTasks()) {
-            if (t.getTaskType() != TasksType.EPIC && t.getStartTime() != null && t.getTaskId() != task.getTaskId()) {
-                if ((t.getStartTime()
-                      .isBefore(task.getStartTime()) && t.getEndTime()
-                                                         .isAfter(task.getStartTime()))
-                        || t.getStartTime()
-                            .equals(task.getStartTime()) || t.getEndTime()
-                                                             .equals(task.getEndTime())
-                        || (t.getStartTime()
-                             .isAfter(task.getStartTime()) && t.getStartTime()
-                                                               .isBefore(task.getEndTime()))
-                        || (t.getStartTime()
-                             .isAfter(task.getStartTime()) && t.getEndTime()
-                                                               .equals(task.getEndTime()))
-                        || (t.getStartTime()
-                             .isAfter(task.getStartTime()) && task.getEndTime()
-                                                                  .isBefore(task.getEndTime()))) {
+            if (t.getTaskType() != TasksType.EPIC && t.getStartTimeInLocalDate() != null && t.getTaskId() != task.getTaskId()) {
+                if ((t.getStartTimeInLocalDate()
+                      .isBefore(task.getStartTimeInLocalDate()) && t.getEndTime()
+                                                                    .isAfter(task.getStartTimeInLocalDate()))
+                        || t.getStartTimeInLocalDate()
+                            .equals(task.getStartTimeInLocalDate()) || t.getEndTime()
+                                                                        .equals(task.getEndTime())
+                        || (t.getStartTimeInLocalDate()
+                             .isAfter(task.getStartTimeInLocalDate()) && t.getStartTimeInLocalDate()
+                                                                          .isBefore(task.getEndTime()))
+                        || (t.getStartTimeInLocalDate()
+                             .isAfter(task.getStartTimeInLocalDate()) && t.getEndTime()
+                                                                          .equals(task.getEndTime()))
+                        || (t.getStartTimeInLocalDate()
+                             .isAfter(task.getStartTimeInLocalDate()) && task.getEndTime()
+                                                                             .isBefore(task.getEndTime()))) {
                     freeTime = false;
                 }
             }

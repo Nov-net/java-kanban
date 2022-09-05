@@ -61,6 +61,10 @@ public class InMemoryHistoryManager implements HistoryManager {
         removeNode(node);
     }
 
+    public void removeALLHistory() {
+        nodeMap.clear();
+    }
+
     // Удаляем объект и меняем привязки в нодах
     private void removeNode(Node node) {
         if (node == null) {

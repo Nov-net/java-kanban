@@ -680,7 +680,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
                 "Текст эпика 1",null, null, null);
         final int taskId = taskManager.addEpic(epic);
 
-        assertNull(epic.getStartTime(), "StartTime эпика не null.");
+        assertNull(epic.getStartTimeInLocalDate(), "StartTime эпика не null.");
 
         // StartTime сабтаска null
         Subtask task0 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
@@ -688,7 +688,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
         taskManager.addSubtask(task0);
         taskManager.updateEpicStartTime(taskId);
 
-        assertNull(epic.getStartTime(), "StartTime эпика не null.");
+        assertNull(epic.getStartTimeInLocalDate(), "StartTime эпика не null.");
 
         // StartTime сабтаска не null
         Subtask task1 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
@@ -700,10 +700,10 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
         taskManager.addSubtask(task2);
         taskManager.updateEpicStartTime(taskId);
 
-        final LocalDateTime epicStartTime = taskManager.getEpic(taskId).getStartTime();
+        final LocalDateTime epicStartTime = taskManager.getEpic(taskId).getStartTimeInLocalDate();
 
-        assertNotNull(epic.getStartTime(), "StartTime эпика null.");
-        assertEquals(taskManager.getSubtask(3).getStartTime(), epicStartTime,
+        assertNotNull(epic.getStartTimeInLocalDate(), "StartTime эпика null.");
+        assertEquals(taskManager.getSubtask(3).getStartTimeInLocalDate(), epicStartTime,
                 "StartTime эпика и сабтаска не совпадает.");
     }
 
@@ -774,8 +774,8 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
         assertNotNull(epic.getTaskStatus(), "Статус эпика null.");
         assertEquals(TasksStatus.DONE, taskManager.getEpic(taskId).getTaskStatus(), "Статус не совпадает.");
 
-        assertNotNull(epic.getStartTime(), "StartTime эпика null.");
-        assertEquals(taskManager.getSubtask(2).getStartTime(), taskManager.getEpic(taskId).getStartTime(),
+        assertNotNull(epic.getStartTimeInLocalDate(), "StartTime эпика null.");
+        assertEquals(taskManager.getSubtask(2).getStartTimeInLocalDate(), taskManager.getEpic(taskId).getStartTimeInLocalDate(),
                 "StartTime эпика и сабтаска не совпадает.");
 
         assertNotNull(epic.getEpicEndTime(), "EndTime эпика null.");

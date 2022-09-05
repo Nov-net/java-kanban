@@ -5,6 +5,8 @@ import tasksManager.Tasks.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.TreeSet;
 
 public class InMemoryTasksManager implements TaskManager {
     Integer taskId = 1;
@@ -217,12 +219,12 @@ public class InMemoryTasksManager implements TaskManager {
     public void updateEpicStartTime(int id) {
         LocalDateTime checkStartTime = null;
         for (Integer taskId : getSubtaskId(id)) {
-            if (subtaskList.get(taskId).getStartTime() == null && checkStartTime == null) {
+            if (subtaskList.get(taskId).getStartTimeInLocalDate() == null && checkStartTime == null) {
                 checkStartTime = null;
-            } else if (subtaskList.get(taskId).getStartTime() != null && checkStartTime == null) {
-                checkStartTime = subtaskList.get(taskId).getStartTime();
-            } else if (subtaskList.get(taskId).getStartTime().isBefore(checkStartTime)) {
-                checkStartTime = subtaskList.get(taskId).getStartTime();
+            } else if (subtaskList.get(taskId).getStartTimeInLocalDate() != null && checkStartTime == null) {
+                checkStartTime = subtaskList.get(taskId).getStartTimeInLocalDate();
+            } else if (subtaskList.get(taskId).getStartTimeInLocalDate().isBefore(checkStartTime)) {
+                checkStartTime = subtaskList.get(taskId).getStartTimeInLocalDate();
             }
         }
         if (checkStartTime != null) {
@@ -269,6 +271,21 @@ public class InMemoryTasksManager implements TaskManager {
         updateEpicStartTime(id);
         updateEpicEndTime(id);
         updateEpicDuration(id);
+    }
+
+    @Override
+    public TreeSet<Task> getPrioritizedTasks() {
+        return null;
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
+    }
+
+    @Override
+    public Task fromSring(String task) {
+        return null;
     }
 
 }

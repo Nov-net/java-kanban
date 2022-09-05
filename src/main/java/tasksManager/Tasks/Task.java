@@ -62,7 +62,7 @@ public class Task {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
-    public LocalDateTime getStartTime() {
+    public LocalDateTime getStartTimeInLocalDate() {
         if (startTime != null) {
             return LocalDateTime.parse(this.startTime, formatter);
         } else {
@@ -70,11 +70,15 @@ public class Task {
         }
     }
 
+    public String getStartTime() {
+        return startTime;
+    }
+
     // запись времени окончания в строку в файл
     public String getStartTimeToString() {
         String formatDateTime = null;
-        if (getStartTime() != null) {
-            formatDateTime = getStartTime().format(formatter);
+        if (getStartTimeInLocalDate() != null) {
+            formatDateTime = getStartTimeInLocalDate().format(formatter);
         }
         return formatDateTime;
     }
@@ -89,10 +93,10 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
-        if (getStartTime() != null && duration != null) {
-            return getStartTime().plusMinutes(this.duration);
-        } else if (getStartTime() != null && duration == null) {
-            return getStartTime();
+        if (getStartTimeInLocalDate() != null && duration != null) {
+            return getStartTimeInLocalDate().plusMinutes(this.duration);
+        } else if (getStartTimeInLocalDate() != null && duration == null) {
+            return getStartTimeInLocalDate();
         } else {
             return null;
         }

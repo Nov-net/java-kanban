@@ -3,6 +3,8 @@ package tasksManager.Managers;
 import tasksManager.Tasks.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.TreeSet;
 
 public interface TaskManager {
 
@@ -61,4 +63,10 @@ public interface TaskManager {
 
     // Апдейт всех элементов эпика зависящих от сабтасков
     void updateEpicElements(int id);
+
+    TreeSet<Task> getPrioritizedTasks();
+
+    public List<Task> getHistory();
+
+    Task fromSring(String task);
 }
