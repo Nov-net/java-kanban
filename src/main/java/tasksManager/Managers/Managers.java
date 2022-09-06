@@ -7,6 +7,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import tasksManager.http.HttpTaskManager;
 import tasksManager.http.HttpTaskServer;
+import tasksManager.http.LocalDateTimeAdapter;
 import tasksManager.server.KVServer;
 
 import java.io.IOException;
@@ -39,7 +40,7 @@ public abstract class Managers {
 
     public static Gson getGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new HttpTaskServer.LocalDateTimeAdapter());
+        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter());
         return gsonBuilder.create();
     }
 

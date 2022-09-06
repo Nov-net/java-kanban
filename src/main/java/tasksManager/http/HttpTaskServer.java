@@ -1,22 +1,16 @@
 package tasksManager.http;
 
 import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import tasksManager.Managers.ManagerSaveExeption;
 import tasksManager.Managers.Managers;
 import tasksManager.Managers.TaskManager;
 import tasksManager.Tasks.Task;
-import tasksManager.server.KVServer;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -25,6 +19,7 @@ public class HttpTaskServer {
     private final HttpServer server;
     private final Gson gson;
     private final TaskManager taskManager;
+    private final String url;
 
     public HttpTaskServer () throws IOException, ManagerSaveExeption {
         this(Managers.getDefault());
@@ -35,11 +30,12 @@ public class HttpTaskServer {
         gson = Managers.getGson();
         server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
         server.createContext("/tasks", this::handler);
+        url = "http://localhost:" + PORT + "/";
     }
 
     public void start() {
         System.out.println("Запускаем сервер на порту " + PORT);
-        System.out.println("Открой в браузере http://localhost:" + PORT + "/");
+        System.out.println("Открой http://localhost:" + PORT + "/");
         server.start();
     }
 
@@ -187,20 +183,7 @@ public class HttpTaskServer {
 
     }
 
-    public static class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
 
-        @Override
-        public void write(final JsonWriter jsonWriter, final LocalDateTime localDate) throws IOException {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-            jsonWriter.value(localDate.format(formatter));
-        }
-
-        @Override
-        public LocalDateTime read(final JsonReader jsonReader) throws IOException {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-            return LocalDateTime.parse(jsonReader.nextString(), formatter);
-        }
-    }
 
     public static void main(String[] args) throws IOException, ManagerSaveExeption {
         new HttpTaskServer().start();
@@ -208,3 +191,4 @@ public class HttpTaskServer {
     }
 
 }
+
