@@ -1,5 +1,9 @@
-package tasksManager.Managers;
+package tasksManager.Managers.memory;
 
+import tasksManager.Managers.Managers;
+import tasksManager.Managers.TaskManager;
+import tasksManager.Managers.history.HistoryManager;
+import tasksManager.Managers.TaskValidationException;
 import tasksManager.Tasks.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +21,7 @@ public class InMemoryTasksManager implements TaskManager {
 
     // Получаем объекты по id
     @Override
-    public Task getTask(int id) {
+    public Task getTask(int id) throws TaskValidationException {
         final Task task = taskList.get(id);
         historyManager.addHistory(task);
         return task;
@@ -55,7 +59,7 @@ public class InMemoryTasksManager implements TaskManager {
 
     // Создаем и сохраняем новые объекты
     @Override
-    public int addTask(Task task) {
+    public int addTask(Task task) throws TaskValidationException {
         final int id = taskId++;
         task.setTaskId(id);
         taskList.put(id, task);
@@ -115,7 +119,7 @@ public class InMemoryTasksManager implements TaskManager {
 
     // Обновляем объекты
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws TaskValidationException {
         taskList.put(task.getTaskId(), task);
     }
 
@@ -135,7 +139,7 @@ public class InMemoryTasksManager implements TaskManager {
 
     // Удаляем объекты по id
     @Override
-    public void removeTask(int id) {
+    public void removeTask(int id) throws TaskValidationException {
         historyManager.removeHistory(id);
         taskList.remove(id);
     }
@@ -165,7 +169,7 @@ public class InMemoryTasksManager implements TaskManager {
 
     // Удаляем все объекты списка
     @Override
-    public void removeAllTask() {
+    public void removeAllTask() throws TaskValidationException {
         taskList.clear();
     }
 
@@ -196,7 +200,7 @@ public class InMemoryTasksManager implements TaskManager {
 
     // Рассчитываем статус эпика по статусам сабтасков
     @Override
-    public void updateEpicStatus(int id) {
+    public void updateEpicStatus(int id) throws TaskValidationException {
         int checkStatus = 0;
         for (Integer taskId : getSubtaskId(id)) {
             if (subtaskList.get(taskId).getTaskStatus().equals(TasksStatus.DONE)) {
@@ -216,7 +220,7 @@ public class InMemoryTasksManager implements TaskManager {
 
     // Апдейт startTime эпика по startTime сабтасков
     @Override
-    public void updateEpicStartTime(int id) {
+    public void updateEpicStartTime(int id) throws TaskValidationException {
         LocalDateTime checkStartTime = null;
         for (Integer taskId : getSubtaskId(id)) {
             if (subtaskList.get(taskId).getStartTime() == null && checkStartTime == null) {
@@ -234,7 +238,7 @@ public class InMemoryTasksManager implements TaskManager {
 
     // Апдейт endTime эпика по endTime сабтасков
     @Override
-    public void updateEpicEndTime(int id) {
+    public void updateEpicEndTime(int id) throws TaskValidationException {
         LocalDateTime checkEndTime = null;
         for (Integer taskId : getSubtaskId(id)) {
             if (subtaskList.get(taskId).getEndTime() == null && checkEndTime == null) {
@@ -252,7 +256,7 @@ public class InMemoryTasksManager implements TaskManager {
 
     // Апдейт duration эпика по сумме duration сабтасков
     @Override
-    public void updateEpicDuration(int id) {
+    public void updateEpicDuration(int id) throws TaskValidationException {
         Integer duration = 0;
         for (Integer taskId : getSubtaskId(id)) {
             if (subtaskList.get(taskId).getDuration() != null) {
@@ -266,7 +270,7 @@ public class InMemoryTasksManager implements TaskManager {
 
     // Апдейт всех элементов эпика зависящих от сабтасков
     @Override
-    public void updateEpicElements(int id) {
+    public void updateEpicElements(int id) throws TaskValidationException {
         updateEpicStatus(id);
         updateEpicStartTime(id);
         updateEpicEndTime(id);

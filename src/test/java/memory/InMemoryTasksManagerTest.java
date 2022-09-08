@@ -1,9 +1,12 @@
+package memory;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import tasksManager.Managers.InMemoryTasksManager;
+import tasksManager.Managers.memory.InMemoryTasksManager;
 import tasksManager.Tasks.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryTasksManagerTest extends TaskManagerTest {
     private static InMemoryTasksManager taskManager;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     @BeforeEach
     public void beforeEach() {
@@ -20,7 +24,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
     @Test
     void addTaskTest() {
         Task task = new Task(null, TasksType.TASK, "Задача 1", TasksStatus.NEW,
-                "Текст задачи 1", "01.09.2022 10:00", 15, null);
+                "Текст задачи 1", LocalDateTime.parse("01.08.2022 11:00", formatter), 15, null);
 
         final int taskId = taskManager.addTask(task);
         final Task savedTask = taskManager.getTask(taskId);
@@ -56,7 +60,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
     @Test
     void addSubtaskTest() {
         Subtask task = new Subtask(null, TasksType.SUBTASK,"Сабтаск 3 к эпику 2",
-                TasksStatus.NEW,"Текст сабтаска 3", "01.09.2022 11:00", 30,2);
+                TasksStatus.NEW,"Текст сабтаска 3", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,2);
 
         final int taskId = taskManager.addSubtask(task);
         final Subtask savedTask = taskManager.getSubtask(taskId);
@@ -75,11 +79,11 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
     @Test
     void updateTaskTest() {
         Task task1 = new Task(null, TasksType.TASK, "Задача 1", TasksStatus.NEW,
-                "Текст задачи 1", "01.09.2022 10:00", 15, null);
+                "Текст задачи 1", LocalDateTime.parse("01.08.2022 11:00", formatter), 15, null);
         final int taskId = taskManager.addTask(task1);
 
         Task task2 = new Task(taskId, TasksType.TASK, "New Задача 1", TasksStatus.NEW,
-                "Текст задачи 1", "01.09.2022 10:00", 60, null);
+                "Текст задачи 1", LocalDateTime.parse("01.08.2022 11:00", formatter), 60, null);
         taskManager.updateTask(task2);
 
         final Task savedTask = taskManager.getTask(taskId);
@@ -101,7 +105,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
         final int taskId = taskManager.addEpic(task1);
 
         Epic task2 = new Epic(taskId, TasksType.EPIC,"New Эпик 2", TasksStatus.NEW,
-                "Текст эпика 2","01.01.2022 10:00", 10, null);
+                "Текст эпика 2",LocalDateTime.parse("01.08.2022 11:00", formatter), 10, null);
         taskManager.updateEpic(task2);
 
         final Epic savedTask = taskManager.getEpic(taskId);
@@ -123,11 +127,11 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
         taskManager.addEpic(epic);
 
         Subtask task1 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "01.09.2022 11:00", 30,1);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,1);
         final int taskId = taskManager.addSubtask(task1);
 
         Subtask task2 = new Subtask(taskId, TasksType.SUBTASK,"New Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "03.09.2022 15:00", 60,1);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("03.08.2022 11:00", formatter), 60,1);
         taskManager.updateSubtask(task2);
 
         final Subtask savedTask = taskManager.getSubtask(taskId);
@@ -143,11 +147,11 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
 
         // при отсутствии эпика
         Subtask task3 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "01.09.2022 11:00", 30,15);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,15);
         final int taskId3 = taskManager.addSubtask(task1);
 
         Subtask task4 = new Subtask(taskId3, TasksType.SUBTASK,"New Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "03.09.2022 15:00", 60,15);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("03.08.2022 11:00", formatter), 60,15);
         taskManager.updateSubtask(task4);
 
         final Subtask savedTask2 = taskManager.getSubtask(taskId3);
@@ -173,7 +177,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
 
         // непустой список
         Task task = new Task(null, TasksType.TASK, "Задача 1", TasksStatus.NEW,
-                "Текст задачи 1", "01.09.2022 10:00", 15, null);
+                "Текст задачи 1", LocalDateTime.parse("01.08.2022 11:00", formatter), 15, null);
         taskManager.addTask(task);
 
         final HashMap<Integer, Task> list2 = taskManager.getTaskList();
@@ -211,7 +215,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
 
         // непустой список
         Subtask task = new Subtask(null, TasksType.SUBTASK,"Сабтаск 3 к эпику 2",
-                TasksStatus.NEW,"Текст сабтаска 3", "01.09.2022 11:00", 30,2);
+                TasksStatus.NEW,"Текст сабтаска 3", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,2);
         taskManager.addSubtask(task);
 
         final HashMap<Integer, Subtask> list2 = taskManager.getSubtaskList();
@@ -231,7 +235,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
 
         // непустой список
         Task task = new Task(null, TasksType.TASK, "Задача 1", TasksStatus.NEW,
-                "Текст задачи 1", "01.09.2022 10:00", 15, null);
+                "Текст задачи 1", LocalDateTime.parse("01.08.2022 11:00", formatter), 15, null);
         taskManager.addTask(task);
 
         final ArrayList<String> list2 = taskManager.getListAllTask();
@@ -271,7 +275,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
 
         // непустой список
         Subtask task = new Subtask(null, TasksType.SUBTASK,"Сабтаск 3 к эпику 2",
-                TasksStatus.NEW,"Текст сабтаска 3", "01.09.2022 11:00", 30,2);
+                TasksStatus.NEW,"Текст сабтаска 3", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,2);
         taskManager.addSubtask(task);
         final ArrayList<String> list2 = taskManager.getListAllSubtask();
 
@@ -285,7 +289,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
     void getTaskTest() {
         // проверка существующего id
         Task task = new Task(null, TasksType.TASK, "Задача 1", TasksStatus.NEW,
-                "Текст задачи 1", "01.09.2022 10:00", 15, null);
+                "Текст задачи 1", LocalDateTime.parse("01.08.2022 11:00", formatter), 15, null);
 
         final int taskId = taskManager.addTask(task);
         final Task savedTask = taskManager.getTask(taskId);
@@ -325,7 +329,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
     void getSubtaskTest() {
         // проверка существующего id
         Subtask task = new Subtask(null, TasksType.SUBTASK,"Сабтаск 3 к эпику 2",
-                TasksStatus.NEW,"Текст сабтаска 3", "01.09.2022 11:00", 30,2);
+                TasksStatus.NEW,"Текст сабтаска 3", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,2);
 
         final int taskId = taskManager.addSubtask(task);
         final Subtask savedTask = taskManager.getSubtask(taskId);
@@ -346,7 +350,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
     void removeTaskTest() {
         // проверка существующего id
         Task task = new Task(null, TasksType.TASK, "Задача 1", TasksStatus.NEW,
-                "Текст задачи 1", "01.09.2022 10:00", 15, null);
+                "Текст задачи 1", LocalDateTime.parse("01.08.2022 11:00", formatter), 15, null);
 
         final int taskId = taskManager.addTask(task);
         final HashMap<Integer, Task> list1 = taskManager.getTaskList();
@@ -375,11 +379,11 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
         final int taskId = taskManager.addEpic(task);
 
         Subtask task1 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "01.09.2022 11:00", 30,taskId);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,taskId);
         final int taskId1 = taskManager.addSubtask(task1);
 
         Subtask task2 = new Subtask(null, TasksType.SUBTASK,"New Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "03.09.2022 15:00", 60,taskId);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("03.08.2022 11:00", formatter), 60,taskId);
         final int taskId2 = taskManager.addSubtask(task2);
 
         final HashMap<Integer, Epic> list1 = taskManager.getEpicList();
@@ -423,11 +427,11 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
         final int taskId0 = taskManager.addEpic(epic);
 
         Subtask task1 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "01.09.2022 11:00", 30,taskId0);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,taskId0);
         final int taskId1 = taskManager.addSubtask(task1);
 
         Subtask task2 = new Subtask(null, TasksType.SUBTASK,"New Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "03.09.2022 15:00", 60,taskId0);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("03.08.2022 11:00", formatter), 60,taskId0);
         final int taskId2 = taskManager.addSubtask(task2);
 
         final ArrayList<Integer> list = taskManager.getSubtaskId(taskId0);
@@ -461,7 +465,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
     void removeSubtaskTest() {
         // проверка существующего id
         Subtask task = new Subtask(null, TasksType.SUBTASK,"Сабтаск 3 к эпику 2",
-                TasksStatus.NEW,"Текст сабтаска 3", "01.09.2022 11:00", 30,2);
+                TasksStatus.NEW,"Текст сабтаска 3", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,2);
         final int taskId = taskManager.addSubtask(task);
         final HashMap<Integer, Subtask> list1 = taskManager.getSubtaskList();
         assertEquals(1, list1.size(), "Неверное количество задач.");
@@ -486,9 +490,9 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
     @Test
     void removeAllTaskTest() {
         Task task = new Task(null, TasksType.TASK, "Задача 1", TasksStatus.NEW,
-                "Текст задачи 1", "01.09.2022 10:00", 15, null);
+                "Текст задачи 1", LocalDateTime.parse("01.08.2022 11:00", formatter), 15, null);
         Task task2 = new Task(null, TasksType.TASK, "Задача 1", TasksStatus.NEW,
-                "Текст задачи 1", "01.09.2022 10:00", 15, null);
+                "Текст задачи 1", LocalDateTime.parse("01.08.2022 11:00", formatter), 15, null);
         taskManager.addTask(task);
         taskManager.addTask(task2);
 
@@ -514,9 +518,9 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
         taskManager.addEpic(epic2);
 
         Subtask task1 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "01.09.2022 11:00", 30,taskId0);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,taskId0);
         Subtask task2 = new Subtask(null, TasksType.SUBTASK,"New Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "03.09.2022 15:00", 60,taskId0);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 60,taskId0);
         taskManager.addSubtask(task1);
         taskManager.addSubtask(task2);
 
@@ -544,9 +548,9 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
     @Test
     void removeAllSubtaskTest() {
         Subtask task = new Subtask(null, TasksType.SUBTASK,"Сабтаск 3 к эпику 2",
-                TasksStatus.NEW,"Текст сабтаска 3", "01.09.2022 11:00", 30,2);
+                TasksStatus.NEW,"Текст сабтаска 3", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,2);
         Subtask task2 = new Subtask(null, TasksType.SUBTASK,"Сабтаск 3 к эпику 2",
-                TasksStatus.NEW,"Текст сабтаска 3", "01.09.2022 11:00", 30,2);
+                TasksStatus.NEW,"Текст сабтаска 3", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,2);
         taskManager.addSubtask(task);
         taskManager.addSubtask(task2);
 
@@ -571,11 +575,11 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
         final int taskId0 = taskManager.addEpic(epic);
 
         Subtask task1 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "01.09.2022 11:00", 30,taskId0);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,taskId0);
         final int taskId1 = taskManager.addSubtask(task1);
 
         Subtask task2 = new Subtask(null, TasksType.SUBTASK,"New Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "03.09.2022 15:00", 60,taskId0);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 60,taskId0);
         final int taskId2 = taskManager.addSubtask(task1);
 
         final ArrayList<Integer> list = taskManager.getSubtaskId(taskId0);
@@ -613,11 +617,11 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
 
         // Все подзадачи со статусом NEW
         Subtask task1 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "01.09.2022 11:00", 30,taskId);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,taskId);
         final int t1 = taskManager.addSubtask(task1);
 
         Subtask task2 = new Subtask(null, TasksType.SUBTASK,"New Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "03.09.2022 15:00", 60,taskId);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 60,taskId);
         final int t2 = taskManager.addSubtask(task2);
         taskManager.updateEpicStatus(taskId);
 
@@ -628,11 +632,11 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
 
         // Подзадачи со статусом IN_PROGRESS
         task1 = new Subtask(t1, TasksType.SUBTASK,"Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "01.09.2022 11:00", 30,taskId);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,taskId);
         taskManager.updateSubtask(task1);
 
         task2 = new Subtask(t2, TasksType.SUBTASK,"New Сабтаск к эпику 1",
-                TasksStatus.IN_PROGRESS,"Текст сабтаска", "03.09.2022 15:00", 60,taskId);
+                TasksStatus.IN_PROGRESS,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 60,taskId);
         taskManager.updateSubtask(task2);
         taskManager.updateEpicStatus(taskId);
 
@@ -643,11 +647,11 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
 
         // Подзадачи со статусами NEW и DONE
         task1 = new Subtask(t1, TasksType.SUBTASK,"Сабтаск к эпику 1",
-                TasksStatus.NEW,"Текст сабтаска", "01.09.2022 11:00", 30,taskId);
+                TasksStatus.NEW,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,taskId);
         taskManager.updateSubtask(task1);
 
         task2 = new Subtask(t2, TasksType.SUBTASK,"New Сабтаск к эпику 1",
-                TasksStatus.DONE,"Текст сабтаска", "03.09.2022 15:00", 60,taskId);
+                TasksStatus.DONE,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 60,taskId);
         taskManager.updateSubtask(task2);
         taskManager.updateEpicStatus(taskId);
 
@@ -658,11 +662,11 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
 
         // Все подзадачи со статусом DONE
         task1 = new Subtask(t1, TasksType.SUBTASK,"Сабтаск к эпику 1",
-                TasksStatus.DONE,"Текст сабтаска", "01.09.2022 11:00", 30,taskId);
+                TasksStatus.DONE,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,taskId);
         taskManager.updateSubtask(task1);
 
         task2 = new Subtask(t2, TasksType.SUBTASK,"New Сабтаск к эпику 1",
-                TasksStatus.DONE,"Текст сабтаска", "03.09.2022 15:00", 60,taskId);
+                TasksStatus.DONE,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 60,taskId);
         taskManager.updateSubtask(task2);
         taskManager.updateEpicStatus(taskId);
 
@@ -680,7 +684,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
                 "Текст эпика 1",null, null, null);
         final int taskId = taskManager.addEpic(epic);
 
-        assertNull(epic.getStartTimeInLocalDate(), "StartTime эпика не null.");
+        assertNull(epic.getStartTime(), "StartTime эпика не null.");
 
         // StartTime сабтаска null
         Subtask task0 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
@@ -688,22 +692,22 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
         taskManager.addSubtask(task0);
         taskManager.updateEpicStartTime(taskId);
 
-        assertNull(epic.getStartTimeInLocalDate(), "StartTime эпика не null.");
+        assertNull(epic.getStartTime(), "StartTime эпика не null.");
 
         // StartTime сабтаска не null
         Subtask task1 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
-                TasksStatus.DONE,"Текст сабтаска", "01.09.2022 11:00", 30,taskId);
+                TasksStatus.DONE,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,taskId);
         Subtask task2 = new Subtask(null, TasksType.SUBTASK,"New Сабтаск к эпику 1",
-                TasksStatus.DONE,"Текст сабтаска", "03.09.2022 15:00", 60,taskId);
+                TasksStatus.DONE,"Текст сабтаска", LocalDateTime.parse("03.08.2022 11:00", formatter), 60,taskId);
 
         taskManager.addSubtask(task1);
         taskManager.addSubtask(task2);
         taskManager.updateEpicStartTime(taskId);
 
-        final LocalDateTime epicStartTime = taskManager.getEpic(taskId).getStartTimeInLocalDate();
+        final LocalDateTime epicStartTime = taskManager.getEpic(taskId).getStartTime();
 
-        assertNotNull(epic.getStartTimeInLocalDate(), "StartTime эпика null.");
-        assertEquals(taskManager.getSubtask(3).getStartTimeInLocalDate(), epicStartTime,
+        assertNotNull(epic.getStartTime(), "StartTime эпика null.");
+        assertEquals(taskManager.getSubtask(3).getStartTime(), epicStartTime,
                 "StartTime эпика и сабтаска не совпадает.");
     }
 
@@ -717,9 +721,9 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
         assertNull(epic.getEpicEndTime(), "EndTime эпика не null.");
 
         Subtask task1 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
-                TasksStatus.DONE,"Текст сабтаска", "01.09.2022 11:00", 30,taskId);
+                TasksStatus.DONE,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,taskId);
         Subtask task2 = new Subtask(null, TasksType.SUBTASK,"New Сабтаск к эпику 1",
-                TasksStatus.DONE,"Текст сабтаска", "03.09.2022 15:00", 60,taskId);
+                TasksStatus.DONE,"Текст сабтаска", LocalDateTime.parse("03.08.2022 11:00", formatter), 60,taskId);
 
         taskManager.addSubtask(task1);
         taskManager.addSubtask(task2);
@@ -743,9 +747,9 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
         assertEquals(0, taskManager.getEpic(taskId).getDuration(), "Duration не совпадает.");
 
         Subtask task1 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
-                TasksStatus.DONE,"Текст сабтаска", "01.09.2022 11:00", 30,taskId);
+                TasksStatus.DONE,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,taskId);
         Subtask task2 = new Subtask(null, TasksType.SUBTASK,"New Сабтаск к эпику 1",
-                TasksStatus.DONE,"Текст сабтаска", "03.09.2022 15:00", 60,taskId);
+                TasksStatus.DONE,"Текст сабтаска", LocalDateTime.parse("03.08.2022 11:00", formatter), 60,taskId);
 
         taskManager.addSubtask(task1);
         taskManager.addSubtask(task2);
@@ -763,9 +767,9 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
         final int taskId = taskManager.addEpic(epic);
 
         Subtask task1 = new Subtask(null, TasksType.SUBTASK,"Сабтаск к эпику 1",
-                TasksStatus.DONE,"Текст сабтаска", "01.09.2022 11:00", 30,taskId);
+                TasksStatus.DONE,"Текст сабтаска", LocalDateTime.parse("01.08.2022 11:00", formatter), 30,taskId);
         Subtask task2 = new Subtask(null, TasksType.SUBTASK,"New Сабтаск к эпику 1",
-                TasksStatus.DONE,"Текст сабтаска", "03.09.2022 15:00", 60,taskId);
+                TasksStatus.DONE,"Текст сабтаска", LocalDateTime.parse("03.08.2022 11:00", formatter), 60,taskId);
 
         taskManager.addSubtask(task1);
         taskManager.addSubtask(task2);
@@ -774,8 +778,8 @@ public class InMemoryTasksManagerTest extends TaskManagerTest {
         assertNotNull(epic.getTaskStatus(), "Статус эпика null.");
         assertEquals(TasksStatus.DONE, taskManager.getEpic(taskId).getTaskStatus(), "Статус не совпадает.");
 
-        assertNotNull(epic.getStartTimeInLocalDate(), "StartTime эпика null.");
-        assertEquals(taskManager.getSubtask(2).getStartTimeInLocalDate(), taskManager.getEpic(taskId).getStartTimeInLocalDate(),
+        assertNotNull(epic.getStartTime(), "StartTime эпика null.");
+        assertEquals(taskManager.getSubtask(2).getStartTime(), taskManager.getEpic(taskId).getStartTime(),
                 "StartTime эпика и сабтаска не совпадает.");
 
         assertNotNull(epic.getEpicEndTime(), "EndTime эпика null.");

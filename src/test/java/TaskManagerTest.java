@@ -1,15 +1,12 @@
 import tasksManager.Managers.TaskManager;
-import tasksManager.Tasks.*;
+import tasksManager.Managers.TaskValidationException;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public abstract class TaskManagerTest <T extends TaskManager> {
 
     // Добавляем новые объекты
     @Test
-    void addTaskTest() {}
+    void addTaskTest() throws TaskValidationException {}
 
     @Test
     void  addEpicTest() {}
@@ -19,7 +16,7 @@ public abstract class TaskManagerTest <T extends TaskManager> {
 
     // Обновляем объекты
     @Test
-    void updateTaskTest() {}
+    void updateTaskTest() throws TaskValidationException {}
 
     @Test
     void updateEpicTest() {}
@@ -29,7 +26,7 @@ public abstract class TaskManagerTest <T extends TaskManager> {
 
     // Получаем список всех объектов
     @Test
-    void getTaskListTest() {}
+    void getTaskListTest() throws TaskValidationException {}
 
     @Test
     void getEpicListTest() {}
@@ -39,7 +36,7 @@ public abstract class TaskManagerTest <T extends TaskManager> {
 
     // Получаем список имен всех объектов
     @Test
-    void getListAllTaskTest() {}
+    void getListAllTaskTest() throws TaskValidationException {}
 
     @Test
     void getListAllEpicTest() {}
@@ -49,7 +46,7 @@ public abstract class TaskManagerTest <T extends TaskManager> {
 
     // Получаем объекты по id
     @Test
-    void getTaskTest() {}
+    void getTaskTest() throws TaskValidationException {}
 
     @Test
     void getEpicTest() {}
@@ -59,7 +56,7 @@ public abstract class TaskManagerTest <T extends TaskManager> {
 
     // Удаляем объекты по id
     @Test
-    void removeTaskTest() {}
+    void removeTaskTest() throws TaskValidationException {}
 
     @Test
     void removeEpicTest() {}
@@ -72,7 +69,7 @@ public abstract class TaskManagerTest <T extends TaskManager> {
 
     // Удаляем все объекты списка
     @Test
-    void removeAllTaskTest() {}
+    void removeAllTaskTest() throws TaskValidationException {}
 
     @Test
     void removeAllEpicTest() {}
@@ -82,25 +79,25 @@ public abstract class TaskManagerTest <T extends TaskManager> {
 
     // Получаем список подзадач эпика
     @Test
-    void getSubtaskIdTest() {}
+    void getSubtaskIdTest() throws TaskValidationException {}
 
     // Рассчитываем статус эпика по статусам сабтасков
     @Test
-    void updateEpicStatusTest() {}
+    void updateEpicStatusTest() throws TaskValidationException {}
 
     // Расчет startTime эпика по startTime сабтасков
     @Test
-    void updateEpicStartTimeTest() {}
+    void updateEpicStartTimeTest() throws TaskValidationException {}
 
     // Апдейт endTime эпика по endTime сабтасков
     @Test
-    void updateEpicEndTimeTest() {}
+    void updateEpicEndTimeTest() throws TaskValidationException {}
 
     // Апдейт duration эпика по сумме duration сабтасков
     @Test
-    void updateEpicDurationTest() {}
+    void updateEpicDurationTest() throws TaskValidationException {}
 
     // Апдейт всех элементов эпика зависящих от сабтасков
     @Test
-    void updateEpicElementsTest() {}
+    void updateEpicElementsTest() throws TaskValidationException {}
 }

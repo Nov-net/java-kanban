@@ -1,5 +1,9 @@
-package tasksManager.Managers;
+package tasksManager.Managers.file;
 
+import tasksManager.Managers.history.HistoryManager;
+import tasksManager.Managers.TaskValidationException;
+import tasksManager.Managers.memory.InMemoryTasksManager;
+import tasksManager.Managers.Managers;
 import tasksManager.Tasks.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -28,7 +32,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     TreeSet<Task> prioritizedTasks = new TreeSet<>(taskComparator);
 
     // Метод создания экземпляра класса с восстановленным списком задач и историей просмотров
-    public FileBackedTasksManager loadFromFile(File file) throws IOException, NullPointerException, NumberFormatException {
+    public FileBackedTasksManager loadFromFile(File file) throws IOException, NullPointerException, NumberFormatException, TaskValidationException {
         final FileBackedTasksManager taskManager = new FileBackedTasksManager(file);
 
         for (String line : taskManager.fileReader(file)) {
@@ -164,7 +168,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     }
 
     // Сохранение в файл задач и истории просмотров
-    protected void save() {
+    protected void save() throws TaskValidationException {
         try (Writer fileWriter = new FileWriter("task_storage.csv", StandardCharsets.UTF_8)) {
             fileWriter.write("id,type,name,status,description,startTime,duration,epic\n");
             for (Task task : taskList.values()) {
@@ -181,7 +185,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
 
     // Добавление новой задачи
     @Override
-    public int addTask(Task task) {
+    public int addTask(Task task) throws TaskValidationException {
         if (task.getTaskType() != TasksType.EPIC) {
             if (checkFreeTime(task)) {
                 if (task.getTaskId() == null) {
@@ -214,7 +218,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
 
     // Обновление объектов
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws TaskValidationException {
         prioritizedTasks.remove(taskList.get(task.getTaskId()));
         if (task.getTaskType() != TasksType.EPIC) {
             if (checkFreeTime(task)) {
@@ -237,7 +241,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
 
     // Получение объекта по id
     @Override
-    public Task getTask(int id) {
+    public Task getTask(int id) throws TaskValidationException {
         final Task task = taskList.get(id);
         historyManager.addHistory(task);
         save();
@@ -263,7 +267,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
 
     // Обновление статуса эпика по статусам сабтасков
     @Override
-    public void updateEpicStatus(int id) {
+    public void updateEpicStatus(int id) throws TaskValidationException {
         int checkStatus = 0;
         for (Integer taskId : getSubtaskId(id)) {
             if (taskList.get(taskId)
@@ -305,7 +309,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
 
     // Апдейт startTime эпика по startTime сабтасков
     @Override
-    public void updateEpicStartTime(int id) {
+    public void updateEpicStartTime(int id) throws TaskValidationException {
         LocalDateTime checkStartTime = null;
         for (Integer taskId : getSubtaskId(id)) {
             if (taskList.get(taskId)
@@ -331,7 +335,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
 
     // Апдейт endTime эпика по endTime сабтасков
     @Override
-    public void updateEpicEndTime(int id) {
+    public void updateEpicEndTime(int id) throws TaskValidationException {
         LocalDateTime checkEndTime = null;
         for (Integer taskId : getSubtaskId(id)) {
             if (taskList.get(taskId)
@@ -357,7 +361,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
 
     // Апдейт duration эпика по сумме duration сабтасков
     @Override
-    public void updateEpicDuration(int id) {
+    public void updateEpicDuration(int id) throws TaskValidationException {
         Integer duration = 0;
         for (Integer taskId : getSubtaskId(id)) {
             if (taskList.get(taskId)
@@ -377,7 +381,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
 
     // Апдейт всех элементов эпика зависящих от сабтасков
     @Override
-    public void updateEpicElements(int id) {
+    public void updateEpicElements(int id) throws TaskValidationException {
         if (prioritizedTasks.contains(taskList.get(id))) {
             prioritizedTasks.remove(taskList.get(id));
         }
@@ -391,7 +395,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
 
     // Удаление объектов по id
     @Override
-    public void removeTask(int id) {
+    public void removeTask(int id) throws TaskValidationException {
         if (taskList.get(id) != null) {
             if (taskList.get(id)
                         .getTaskType() == TasksType.EPIC) {
@@ -410,7 +414,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
 
     // Удаление всех объектов списка
     @Override
-    public void removeAllTask() {
+    public void removeAllTask() throws TaskValidationException {
         prioritizedTasks.clear();
         taskList.clear();
         historyManager.removeALLHistory();
@@ -438,6 +442,8 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
         return (TreeSet<Task>) prioritizedTasks.clone();
     }
 
+
+    // Ростислав, не поняла, как можно оптимизировать здесь проверку. Буду признательна за рекомендацию))
     protected boolean checkFreeTime(Task task) {
         boolean freeTime = true;
         for (Task t : getPrioritizedTasks()) {

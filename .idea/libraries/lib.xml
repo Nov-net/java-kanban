@@ -4,10 +4,12 @@
       <root url="file://$PROJECT_DIR$/lib" />
       <root url="file://$PROJECT_DIR$/../m1-t25-api/lib" />
       <root url="file://$PROJECT_DIR$/../m1-t25-api/lib" />
+      <root url="file://$PROJECT_DIR$/src/main/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
     <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/src/main/lib" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../m1-t25-api/lib" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../m1-t25-api/lib" recursive="false" />
   </library>

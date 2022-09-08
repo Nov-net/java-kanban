@@ -1,4 +1,4 @@
-package tasksManager.Managers;
+package tasksManager.Managers.history;
 
 import tasksManager.Tasks.*;
 import java.util.*;

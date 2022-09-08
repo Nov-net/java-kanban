@@ -2,17 +2,16 @@ package tasksManager.Managers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import tasksManager.http.HttpTaskManager;
-import tasksManager.http.HttpTaskServer;
-import tasksManager.http.LocalDateTimeAdapter;
-import tasksManager.server.KVServer;
+import tasksManager.Managers.file.FileBackedTasksManager;
+import tasksManager.Managers.history.HistoryManager;
+import tasksManager.Managers.history.InMemoryHistoryManager;
+import tasksManager.Managers.http.HttpTaskManager;
+import tasksManager.Managers.adapter.LocalDateTimeSerializer;
+import tasksManager.Managers.memory.InMemoryTasksManager;
+import tasksManager.Managers.server.KVServer;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public abstract class Managers {
 
@@ -42,7 +41,7 @@ public abstract class Managers {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setPrettyPrinting();
         gsonBuilder.serializeNulls();
-        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter());
+        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer());
         return gsonBuilder.create();
     }
 

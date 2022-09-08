@@ -1,8 +1,9 @@
-package tasksManager.http;
+package tasksManager.Managers.http;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import tasksManager.Managers.FileBackedTasksManager;
+import tasksManager.Managers.TaskValidationException;
+import tasksManager.Managers.file.FileBackedTasksManager;
 import tasksManager.Managers.ManagerSaveExeption;
 import tasksManager.Managers.Managers;
 import tasksManager.Tasks.Task;
@@ -45,13 +46,15 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
+
+    // Ростислав, привет! По твоей рекомендации заменила исключение на TaskValidationException и разложила все классы по папкам
     @Override
-    protected void save() {
+    protected void save() throws TaskValidationException {
         try {
             client.put("tasks", gson.toJson(new ArrayList<Task>(taskList.values())));
             client.put("history", gson.toJson(historyToString(historyManager)));
         } catch (ManagerSaveExeption e) {
-            throw new RuntimeException(e);
+            throw new TaskValidationException(e);
         }
     }
 

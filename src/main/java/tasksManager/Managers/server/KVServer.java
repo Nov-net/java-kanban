@@ -1,4 +1,4 @@
-package tasksManager.server;
+package tasksManager.Managers.server;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 

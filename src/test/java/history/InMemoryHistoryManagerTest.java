@@ -1,11 +1,15 @@
+package history;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import tasksManager.Managers.HistoryManager;
+import tasksManager.Managers.history.HistoryManager;
 import tasksManager.Managers.Managers;
 import tasksManager.Tasks.Task;
 import tasksManager.Tasks.TasksStatus;
 import tasksManager.Tasks.TasksType;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InMemoryHistoryManagerTest {
 
     private static HistoryManager historyManager;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     @BeforeEach
     public void beforeEach() {
@@ -22,7 +27,7 @@ public class InMemoryHistoryManagerTest {
     @Test
     void addHistoryTest() {
         Task task = new Task(1, TasksType.TASK, "Задача 1", TasksStatus.NEW,
-                "Текст задачи 1", "01.09.2022 10:00", 15, null);
+                "Текст задачи 1", LocalDateTime.parse("02.08.2022 11:00", formatter), 15, null);
         historyManager.addHistory(task);
         final List<Task> history = historyManager.getHistory();
 
@@ -34,9 +39,9 @@ public class InMemoryHistoryManagerTest {
     @Test
     void removeHistoryTest() {
         Task task = new Task(1, TasksType.TASK, "Задача 1", TasksStatus.NEW,
-                "Текст задачи 1", "01.09.2022 10:00", 15, null);
+                "Текст задачи 1", LocalDateTime.parse("02.08.2022 11:00", formatter), 15, null);
         Task task2 = new Task(2, TasksType.TASK, "Задача 2", TasksStatus.NEW,
-                "Текст задачи 2", "02.09.2022 10:00", 30, null);
+                "Текст задачи 2", LocalDateTime.parse("02.08.2022 11:00", formatter), 30, null);
         historyManager.addHistory(task);
         historyManager.addHistory(task2);
 
@@ -66,7 +71,7 @@ public class InMemoryHistoryManagerTest {
         assertNotNull(history, "История не возвращается.");
 
         Task task = new Task(1, TasksType.TASK, "Задача 1", TasksStatus.NEW,
-                "Текст задачи 1", "01.09.2022 10:00", 15, null);
+                "Текст задачи 1", LocalDateTime.parse("02.08.2022 11:00", formatter), 15, null);
         historyManager.addHistory(task);
         final List<Task> history1 = historyManager.getHistory();
 
