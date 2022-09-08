@@ -219,12 +219,12 @@ public class InMemoryTasksManager implements TaskManager {
     public void updateEpicStartTime(int id) {
         LocalDateTime checkStartTime = null;
         for (Integer taskId : getSubtaskId(id)) {
-            if (subtaskList.get(taskId).getStartTimeInLocalDate() == null && checkStartTime == null) {
+            if (subtaskList.get(taskId).getStartTime() == null && checkStartTime == null) {
                 checkStartTime = null;
-            } else if (subtaskList.get(taskId).getStartTimeInLocalDate() != null && checkStartTime == null) {
-                checkStartTime = subtaskList.get(taskId).getStartTimeInLocalDate();
-            } else if (subtaskList.get(taskId).getStartTimeInLocalDate().isBefore(checkStartTime)) {
-                checkStartTime = subtaskList.get(taskId).getStartTimeInLocalDate();
+            } else if (subtaskList.get(taskId).getStartTime() != null && checkStartTime == null) {
+                checkStartTime = subtaskList.get(taskId).getStartTime();
+            } else if (subtaskList.get(taskId).getStartTime().isBefore(checkStartTime)) {
+                checkStartTime = subtaskList.get(taskId).getStartTime();
             }
         }
         if (checkStartTime != null) {

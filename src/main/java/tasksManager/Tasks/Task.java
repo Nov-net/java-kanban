@@ -11,12 +11,12 @@ public class Task {
     private TasksStatus taskStatus;
     private String taskDescription;
     private Integer epicId;
-    String startTime;
+    LocalDateTime startTime;
     Integer duration;
     LocalDateTime endTime;
 
     public Task (Integer taskId, TasksType taskType, String taskName, TasksStatus taskStatus,
-                 String taskDescription, String startTime, Integer duration, Integer epicId) {
+                 String taskDescription, LocalDateTime startTime, Integer duration, Integer epicId) {
         this.taskId = taskId;
         this.taskType = taskType;
         this.taskName = taskName;
@@ -62,23 +62,15 @@ public class Task {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
-    public LocalDateTime getStartTimeInLocalDate() {
-        if (startTime != null) {
-            return LocalDateTime.parse(this.startTime, formatter);
-        } else {
-            return null;
-        }
-    }
-
-    public String getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
     // запись времени окончания в строку в файл
     public String getStartTimeToString() {
         String formatDateTime = null;
-        if (getStartTimeInLocalDate() != null) {
-            formatDateTime = getStartTimeInLocalDate().format(formatter);
+        if (getStartTime() != null) {
+            formatDateTime = getStartTime().format(formatter);
         }
         return formatDateTime;
     }
@@ -89,14 +81,14 @@ public class Task {
 
 
     public void setStartTime(LocalDateTime time) {
-        this.startTime = time.format(formatter);
+        this.startTime = time;
     }
 
     public LocalDateTime getEndTime() {
-        if (getStartTimeInLocalDate() != null && duration != null) {
-            return getStartTimeInLocalDate().plusMinutes(this.duration);
-        } else if (getStartTimeInLocalDate() != null && duration == null) {
-            return getStartTimeInLocalDate();
+        if (getStartTime() != null && duration != null) {
+            return getStartTime().plusMinutes(this.duration);
+        } else if (getStartTime() != null && duration == null) {
+            return getStartTime();
         } else {
             return null;
         }

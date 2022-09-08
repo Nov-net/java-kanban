@@ -4,6 +4,7 @@ import tasksManager.Tasks.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,7 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     public static Integer taskId = 0;
     protected final static HashMap<Integer, Task> taskList = new HashMap<>();
     protected final static HistoryManager historyManager = Managers.getDefaultHistory();
-    Comparator<Task> taskComparator = Comparator.comparing(Task::getStartTimeInLocalDate,
+    Comparator<Task> taskComparator = Comparator.comparing(Task::getStartTime,
                                                         Comparator.nullsLast(Comparator.naturalOrder()))
                                                 .thenComparing(Task::getTaskName);
     TreeSet<Task> prioritizedTasks = new TreeSet<>(taskComparator);
@@ -89,25 +90,26 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
         }
 
         Task task = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
         switch (splitTask[1]) {
             case "TASK":
                 task = new Task(Integer.parseInt(splitTask[0]), TasksType.TASK, splitTask[2], status, splitTask[4],
-                        splitTask[5], Integer.parseInt(splitTask[6]), null);
+                        LocalDateTime.parse(splitTask[5], formatter), Integer.parseInt(splitTask[6]), null);
                 if (Integer.parseInt(splitTask[0]) > taskId) {
                     taskId = Integer.parseInt(splitTask[0]);
                 }
                 break;
             case "EPIC":
                 task = new Epic(Integer.parseInt(splitTask[0]), TasksType.EPIC, splitTask[2], status, splitTask[4],
-                        splitTask[5], Integer.parseInt(splitTask[6]), null);
+                        LocalDateTime.parse(splitTask[5], formatter), Integer.parseInt(splitTask[6]), null);
                 if (Integer.parseInt(splitTask[0]) > taskId) {
                     taskId = Integer.parseInt(splitTask[0]);
                 }
                 break;
             case "SUBTASK":
                 task = new Subtask(Integer.parseInt(splitTask[0]), TasksType.SUBTASK, splitTask[2], status, splitTask[4],
-                        splitTask[5], Integer.parseInt(splitTask[6]), Integer.parseInt(splitTask[7]));
+                        LocalDateTime.parse(splitTask[5], formatter), Integer.parseInt(splitTask[6]), Integer.parseInt(splitTask[7]));
                 if (Integer.parseInt(splitTask[0]) > taskId) {
                     taskId = Integer.parseInt(splitTask[0]);
                 }
@@ -307,17 +309,17 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
         LocalDateTime checkStartTime = null;
         for (Integer taskId : getSubtaskId(id)) {
             if (taskList.get(taskId)
-                        .getStartTimeInLocalDate() == null && checkStartTime == null) {
+                        .getStartTime() == null && checkStartTime == null) {
                 checkStartTime = null;
             } else if (taskList.get(taskId)
-                               .getStartTimeInLocalDate() != null && checkStartTime == null) {
+                               .getStartTime() != null && checkStartTime == null) {
                 checkStartTime = taskList.get(taskId)
-                                         .getStartTimeInLocalDate();
+                                         .getStartTime();
             } else if (taskList.get(taskId)
-                               .getStartTimeInLocalDate()
+                               .getStartTime()
                                .isBefore(checkStartTime)) {
                 checkStartTime = taskList.get(taskId)
-                                         .getStartTimeInLocalDate();
+                                         .getStartTime();
             }
         }
         if (checkStartTime != null) {
@@ -439,21 +441,21 @@ public class FileBackedTasksManager extends InMemoryTasksManager {
     protected boolean checkFreeTime(Task task) {
         boolean freeTime = true;
         for (Task t : getPrioritizedTasks()) {
-            if (t.getTaskType() != TasksType.EPIC && t.getStartTimeInLocalDate() != null && t.getTaskId() != task.getTaskId()) {
-                if ((t.getStartTimeInLocalDate()
-                      .isBefore(task.getStartTimeInLocalDate()) && t.getEndTime()
-                                                                    .isAfter(task.getStartTimeInLocalDate()))
-                        || t.getStartTimeInLocalDate()
-                            .equals(task.getStartTimeInLocalDate()) || t.getEndTime()
+            if (t.getTaskType() != TasksType.EPIC && t.getStartTime() != null && t.getTaskId() != task.getTaskId()) {
+                if ((t.getStartTime()
+                      .isBefore(task.getStartTime()) && t.getEndTime()
+                                                                    .isAfter(task.getStartTime()))
+                        || t.getStartTime()
+                            .equals(task.getStartTime()) || t.getEndTime()
                                                                         .equals(task.getEndTime())
-                        || (t.getStartTimeInLocalDate()
-                             .isAfter(task.getStartTimeInLocalDate()) && t.getStartTimeInLocalDate()
+                        || (t.getStartTime()
+                             .isAfter(task.getStartTime()) && t.getStartTime()
                                                                           .isBefore(task.getEndTime()))
-                        || (t.getStartTimeInLocalDate()
-                             .isAfter(task.getStartTimeInLocalDate()) && t.getEndTime()
+                        || (t.getStartTime()
+                             .isAfter(task.getStartTime()) && t.getEndTime()
                                                                           .equals(task.getEndTime()))
-                        || (t.getStartTimeInLocalDate()
-                             .isAfter(task.getStartTimeInLocalDate()) && task.getEndTime()
+                        || (t.getStartTime()
+                             .isAfter(task.getStartTime()) && task.getEndTime()
                                                                              .isBefore(task.getEndTime()))) {
                     freeTime = false;
                 }

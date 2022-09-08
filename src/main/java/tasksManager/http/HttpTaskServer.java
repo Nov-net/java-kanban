@@ -10,12 +10,14 @@ import tasksManager.Tasks.Task;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class HttpTaskServer {
-    public static final int PORT = 8080;
+    public static final int PORT = 8082;
     private final HttpServer server;
     private final Gson gson;
     private final TaskManager taskManager;
@@ -82,8 +84,8 @@ public class HttpTaskServer {
     private void handleTask(HttpExchange h) throws IOException {
         Integer id = null;
 
-        if (h.getRequestURI().getQuery() != null) {
-            id = Integer.parseInt(h.getRequestURI().getQuery().substring(3));
+        if (h.getRequestURI().getRawQuery() != null) {
+            id = Integer.parseInt(h.getRequestURI().getRawQuery().substring(3));
         }
 
         switch (h.getRequestMethod()) {
@@ -115,6 +117,7 @@ public class HttpTaskServer {
                     System.out.println("Задача id=" + task.getTaskId() + " обновлена");
                     h.sendResponseHeaders(200, 0);
                 }
+
                 break;
 
             case "DELETE":
@@ -166,15 +169,19 @@ public class HttpTaskServer {
     // чтение содержимого тела запроса
     protected String readText(HttpExchange h) throws IOException {
         InputStream inputStream = h.getRequestBody();
-        return new String(inputStream.readAllBytes(), UTF_8);
+        return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
     }
 
     // отправка ответа в теле ответа
     protected void sendText(HttpExchange h, String text) throws IOException {
-        byte[] resp = text.getBytes(UTF_8);
-        h.getResponseHeaders().add("Content-Type", "application/json");
+        byte[] resp = text.getBytes(StandardCharsets.UTF_8);
+        h.getResponseHeaders().set("Content-Type", "application/json"); //h.getResponseHeaders().add("Content-Type", "application/json");
         h.sendResponseHeaders(200, resp.length);
-        h.getResponseBody().write(resp);
+        //h.getResponseBody().write(resp);
+
+        try (OutputStream os = h.getResponseBody()) {
+            os.write(resp);
+        }
     }
 
     public void stop() {

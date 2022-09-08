@@ -40,6 +40,8 @@ public abstract class Managers {
 
     public static Gson getGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting();
+        gsonBuilder.serializeNulls();
         gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter());
         return gsonBuilder.create();
     }

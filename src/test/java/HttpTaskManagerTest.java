@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpTaskManagerTest extends FileBackedTasksManagerTest {
-    static KVServer kvServer;
+/*    static KVServer kvServer;
 
     static {
         try {
@@ -86,7 +86,7 @@ public class HttpTaskManagerTest extends FileBackedTasksManagerTest {
         final List<Task> history = taskManager2.getHistory();
         assertNotNull(tasks, "Возвращает пустой список");
         assertEquals(2, tasks.size(), "Не соответствует количество задач");
-    }
+    }*/
 
 
 }
